@@ -315,12 +315,12 @@ table.cmp td:first-child{color:var(--muted)}
     <div class="eq multi"><span class="eqp">\( \displaystyle \text{particle: } E = \frac{h^2}{8mL^2}\left(n_x^2 + n_y^2 + n_z^2\right), \)</span><span class="eqp">\( \displaystyle \text{photon: } E = \frac{hc}{2L}\sqrt{n_x^2 + n_y^2 + n_z^2}. \)</span></div>
     <p data-k="k55">Surfaces of constant energy in \((n_x, n_y, n_z)\) space are spheres in both cases, but the radius \(n\) grows as \(E^{1/2}\) for the particle and as \(E\) for the photon. Counting the lattice points in an eighth of a sphere, \(N = \frac18\cdot\frac{4\pi}{3}n^3\) (times 2 for the photon's polarizations), with \(V = L^3\):</p>
     <div class="eq multi"><span class="eqp">\( \displaystyle \text{particle: } g(E) = \frac{V}{4\pi^2}\left(\frac{2m}{\hbar^2}\right)^{3/2}E^{1/2}, \)</span><span class="eqp">\( \displaystyle \text{photon: } g(E) = \frac{V}{\pi^2\hbar^3c^3}\,E^2. \)</span></div>
-    <p data-k="k56">For photons, with \(E = h\nu\), this is \(g(\nu)\,d\nu = \frac{8\pi V\nu^2}{c^3}d\nu\), the mode count in Planck's radiation law. In general, \(E \propto p^s\) in three dimensions gives \(g(E) \propto E^{3/s - 1}\) and a pressure \(P = \frac{s}{3}u\), where \(u\) is the energy density.</p>
+    <p data-k="k56">For photons, with \(E = hf\), this is \(g(f)\,df = \frac{8\pi Vf^2}{c^3}df\), the mode count in Planck's radiation law. In general, \(E \propto p^s\) in three dimensions gives \(g(E) \propto E^{3/s - 1}\) and a pressure \(P = \frac{s}{3}u\), where \(u\) is the energy density.</p>
   </div>
   <div class="fig">
     <div>
-      <div class="canvas-holder"><canvas id="sCv" aria-label="A slice of n-space with lattice points colored by equal-width energy bins"></canvas></div>
-      <p class="cap" data-k="k57">A slice \(n_z = 1\) of \(n\)-space. Alternate colors mark energy bins of equal width \(\Delta E\): for the particle the rings get thinner outward, for the photon they keep the same width.</p>
+      <div class="canvas-holder"><canvas id="sCv" aria-label="The octant of n-space in 3D, with lattice points colored by equal-width energy shells. Drag to rotate."></canvas></div>
+      <p class="cap" data-k="k57">The octant of \(n\)-space in 3D (drag to rotate). Alternate colors mark shells of equal energy width \(\Delta E\), up to 12 of them: for the particle the shells get thinner outward, for the photon they keep the same width.</p>
       <div class="canvas-holder" style="margin-top:1rem"><canvas id="hCv" aria-label="Number of states per energy bin from counting lattice points, compared with the formula for the density of states"></canvas></div>
       <p class="verdict" id="sVerdict"></p>
     </div>
@@ -358,7 +358,7 @@ table.cmp td:first-child{color:var(--muted)}
       <tr><td>Thermal result</td><td>Ideal gas \(U = \frac32 Nk_{\mathrm{B}}T\)</td><td>Stefan–Boltzmann \(u \propto T^4\)</td></tr>
     </table></div>
     <p class="boxnote" data-k="k67">A box quantizes the momentum the same way for both, \(p_n = nh/2L\). Whether the levels go as \(n^2\) or \(n\), and whether the density of states goes as \(E^{1/2}\) or \(E^2\), all comes from the dispersion relation set by the ratio of the orders of the time and space derivatives in the wave equation: 1 : 2 for Schrödinger, 2 : 2 for Maxwell.</p>
-    <p data-k="k68">See where these densities of states lead in the companion demos: <a href="https://lshlj82.github.io/degenerate-fermi-gas/">degenerate Fermi gases</a> (\(g \propto \sqrt{\varepsilon}\)) and <a href="https://lshlj82.github.io/photon-statistics/">photon statistics</a> (\(g \propto \nu^2\)).</p>
+    <p data-k="k68">See where these densities of states lead in the companion demos: <a href="https://lshlj82.github.io/degenerate-fermi-gas/">degenerate Fermi gases</a> (\(g \propto \sqrt{\varepsilon}\)) and <a href="https://lshlj82.github.io/photon-statistics/">photon statistics</a> (\(g \propto f^2\)).</p>
   </div>
 </section>
 </div>
@@ -538,20 +538,10 @@ function dosRender(){
   const col = el ? C.fermion : C.hot, col2 = el ? C.sea : C.band;
   // energy as a function of the n-space radius: particle E = n^2, photon E = n (units of h^2/8mL^2 and hc/2L)
   const Efun = r2 => el ? r2 : Math.sqrt(r2);
-  // slice picture
-  let c = sCtx; if (c){ const W=640, H=380, n2max=29, L=50, T=14, s=(H-T-36)/n2max, X = v => L + v*s, Y = v => H-36 - v*s;
-    c.clearRect(0,0,W,H); c.fillStyle=C.surface; c.fillRect(0,0,W,H);
-    const Emax = Efun(n2max*n2max), dE = Emax/nb;
-    for (let b=1;b<=nb;b++){ const rr = el ? Math.sqrt(b*dE) : b*dE; c.strokeStyle=C.rule; c.lineWidth=1; c.beginPath(); c.arc(X(0), Y(0), rr*s, -Math.PI/2, 0); c.stroke(); }
-    for (let a=1;a<=n2max;a++) for (let b=1;b<=n2max;b++){ const E = Efun(a*a+b*b+1), k = Math.floor(E/dE); if (k >= nb) continue;
-      c.fillStyle = k%2 ? col : col2; c.beginPath(); c.arc(X(a), Y(b), 3.3, 0, 7); c.fill(); }
-    axes(c, L, T, 20, 36, W, H); c.fillStyle=C.muted; rich(c, X(n2max), H-14, 15, [['n','i'],['x','isub']], 'right'); rich(c, L-8, T+12, 15, [['n','i'],['y','isub']], 'right');
-    c.font='12px '+SANS; c.textAlign='left'; c.fillStyle=C.muted;
-    c.textAlign='right'; const msg = el ? [tr('particle: radius n ∝ √E','입자: 반지름 n ∝ √E'), tr('equal ΔE → thinner and thinner rings','같은 ΔE → 점점 얇아지는 고리')] : [tr('photon: radius n ∝ E','광자: 반지름 n ∝ E'), tr('equal ΔE → rings of equal width','같은 ΔE → 폭이 같은 고리')];
-    c.fillText(msg[0], W-14, T+14); c.fillText(msg[1], W-14, T+32);
-  }
+  // 3D octant of n-space, rotatable
+  octRender();
   // histogram from exact lattice counting
-  c = hCtx; if (!c) return;
+  const c = hCtx; if (!c) return;
   const lat = lattice(), Emax = Efun(NM*NM), dE = Emax/nb, cnt = new Float64Array(nb); let tot=0;
   for (let q=0;q<lat.length;q++){ const E = Efun(lat[q]); if (E < Emax){ cnt[Math.floor(E/dE)]++; tot++; } }
   const pol = el ? 1 : 2; for (let b=0;b<nb;b++) cnt[b] *= pol; tot *= pol;
@@ -569,11 +559,76 @@ function dosRender(){
   c.textAlign='left'; c.fillStyle=C.ink; c.fillText(tr('— formula g(E) ΔE','— 공식 g(E) ΔE'), L+10, T+12);
   $('sCnt').textContent = tot.toLocaleString('en-US'); $('sForm').textContent = Math.round(Nf(Emax)).toLocaleString('en-US');
   $('sExp').innerHTML = el ? '<i>E</i><sup>1/2</sup>' : '<i>E</i><sup>2</sup>';
-  $('sVerdict').textContent = el ? tr('Equal energy bins hold more and more states, but slowly: g(E) ∝ √E.','같은 에너지 구간에 담기는 상태 수가 늘지만 천천히 늡니다: g(E) ∝ √E.')
-                                 : tr('Equal energy bins fill up fast: the shells keep their width while their area grows as E², so g(E) ∝ E².','같은 에너지 구간이 빠르게 채워집니다: 껍질의 폭은 그대로인데 넓이가 E²으로 커지므로 g(E) ∝ E²입니다.');
+  $('sVerdict').innerHTML = el ? tr('Equal energy bins hold more and more states, but slowly: <i>g</i>(<i>E</i>) ∝ <i>E</i><sup>1/2</sup>.','같은 에너지 구간에 담기는 상태 수가 늘지만 천천히 늡니다: <i>g</i>(<i>E</i>) ∝ <i>E</i><sup>1/2</sup>.')
+                                 : tr('Equal energy bins fill up fast: the shells keep their width while their area grows as <i>E</i><sup>2</sup>, so <i>g</i>(<i>E</i>) ∝ <i>E</i><sup>2</sup>.','같은 에너지 구간이 빠르게 채워집니다: 껍질의 폭은 그대로인데 넓이가 <i>E</i><sup>2</sup>으로 커지므로 <i>g</i>(<i>E</i>) ∝ <i>E</i><sup>2</sup>입니다.');
 }
 document.querySelectorAll('[data-sp]').forEach(b => b.addEventListener('click', () => { SD.sp = b.dataset.sp; dosRender(); }));
 $('sB').addEventListener('input', e => { SD.bins = +e.target.value; dosRender(); });
+
+
+/* 3D octant of n-space: lattice points colored by equal-width energy shells */
+const OV = {yaw:0.75, pitch:0.38, drag:null, spin:!reduceMotion, vis:false};
+const NS = 13;
+function sqrtLabel(c, xr, y, size, prefix, rad, col){   // right-aligned "prefix n ∝ √E" with a radical whose bar covers E
+  c.save(); c.fillStyle = col; c.strokeStyle = col;
+  const parts = [[prefix,'s'],['n','i'],[' ∝ ','r']];
+  const fontOf = st => st==='i' ? 'italic '+size+'px '+SERIF : st==='s' ? (size*0.88)+'px '+SANS : size+'px '+SERIF;
+  const wP = parts.reduce((a,[t,st]) => { c.font = fontOf(st); return a + c.measureText(t).width; }, 0);
+  c.font = fontOf('i'); const wE = c.measureText('E').width;
+  const wR = rad ? size*0.62 + wE + size*0.12 : wE, x0 = xr - wP - wR;
+  rich(c, x0, y, size, parts, 'left');
+  let xe = x0 + wP;
+  if (rad){ const s = size; c.lineWidth = Math.max(1.1, s*0.075); c.lineJoin = 'round'; c.beginPath();
+    c.moveTo(xe + 0.02*s, y - 0.36*s); c.lineTo(xe + 0.14*s, y - 0.43*s); c.lineTo(xe + 0.3*s, y + 0.06*s); c.lineTo(xe + 0.55*s, y - 0.92*s); c.lineTo(xe + 0.62*s + wE + 0.1*s, y - 0.92*s); c.stroke();
+    xe += 0.62*s; }
+  c.font = fontOf('i'); c.textAlign = 'left'; c.fillText('E', xe, y);
+  c.restore(); }
+function octRender(){
+  const c = sCtx; if (!c) return;
+  const W=640, H=380, el = SD.sp==='e', col = el ? C.fermion : C.hot, col2 = el ? C.sea : C.band;
+  const nb = Math.min(SD.bins, 12), Efun = r2 => el ? r2 : Math.sqrt(r2), Emax = Efun(NS*NS), dE = Emax/nb;
+  c.clearRect(0,0,W,H); c.fillStyle=C.surface; c.fillRect(0,0,W,H);
+  const cy = Math.cos(OV.yaw), sy = Math.sin(OV.yaw), cp = Math.cos(OV.pitch), sp = Math.sin(OV.pitch);
+  // n_z is up; rotate about it by yaw, then tilt by pitch
+  const P0 = (x,y,z) => { const X1 = x*cy - y*sy, Y1 = x*sy + y*cy; return [X1, -(z*cp - Y1*sp), Y1*cp + z*sp]; };
+  // fit the octant (sphere of radius NS plus the axes) into the left part of the canvas
+  const R0 = NS + 2.5; let bx0=Infinity, bx1=-Infinity, by0=Infinity, by1=-Infinity;
+  for (let q=0;q<=24;q++) for (let w=0;w<=24;w++){ const a = q/24*Math.PI/2, b2 = w/24*Math.PI/2, pt = P0(R0*Math.cos(a)*Math.cos(b2), R0*Math.sin(a)*Math.cos(b2), R0*Math.sin(b2)); bx0=Math.min(bx0,pt[0]); bx1=Math.max(bx1,pt[0]); by0=Math.min(by0,pt[1]); by1=Math.max(by1,pt[1]); }
+  { const o = P0(0,0,0); bx0=Math.min(bx0,o[0]); bx1=Math.max(bx1,o[0]); by0=Math.min(by0,o[1]); by1=Math.max(by1,o[1]); }
+  const boxW = 430, boxH = H - 44, sc = Math.min(boxW/(bx1-bx0), boxH/(by1-by0)), ox = 24 + (boxW - (bx1-bx0)*sc)/2 - bx0*sc, oy = 22 + (boxH - (by1-by0)*sc)/2 - by0*sc;
+  const P = (x,y,z) => { const p = P0(x,y,z); return [ox + p[0]*sc, oy + p[1]*sc, p[2]]; };
+  // shell boundaries: quarter circles on the three coordinate planes
+  c.lineWidth = 1; c.strokeStyle = C.rule;
+  for (let b=1;b<=nb;b++){ const r = el ? Math.sqrt(b*dE) : b*dE;
+    for (const plane of [0,1,2]){ c.beginPath(); for (let q=0;q<=40;q++){ const a = q/40*Math.PI/2, u = r*Math.cos(a), v = r*Math.sin(a);
+      const p = plane===0 ? P(u,v,0) : plane===1 ? P(0,u,v) : P(v,0,u); q ? c.lineTo(p[0],p[1]) : c.moveTo(p[0],p[1]); } c.stroke(); } }
+  // axes
+  c.strokeStyle = C.muted; c.lineWidth = 1.3; c.fillStyle = C.muted;
+  [[NS+2.5,0,0,'x'],[0,NS+2.5,0,'y'],[0,0,NS+2.5,'z']].forEach(([x,y,z,l]) => { const a = P(0,0,0), b = P(x,y,z); c.beginPath(); c.moveTo(a[0],a[1]); c.lineTo(b[0],b[1]); c.stroke();
+    rich(c, b[0] + (l==='z' ? 8 : 4), b[1] + (l==='z' ? 4 : 14), 15, [['n','i'],[l,'isub']], 'left'); });
+  // points, far to near
+  const pts = [];
+  for (let a=1;a<=NS;a++) for (let b=1;b<=NS;b++) for (let d=1;d<=NS;d++){ const E = Efun(a*a+b*b+d*d), k = Math.floor(E/dE); if (k >= nb) continue; const p = P(a,b,d); pts.push([p[0],p[1],p[2],k]); }
+  pts.sort((u,v) => v[2]-u[2]);
+  let dmin = Infinity, dmax = -Infinity; for (const p of pts){ dmin = Math.min(dmin,p[2]); dmax = Math.max(dmax,p[2]); }
+  for (const [x,y,d,k] of pts){ const t = (d-dmin)/(dmax-dmin||1); c.globalAlpha = 0.95 - 0.55*t; c.fillStyle = k%2 ? col : col2;
+    c.beginPath(); c.arc(x, y, (3.4 - 1.2*t)*sc/17, 0, 7); c.fill(); }
+  c.globalAlpha = 1;
+  // labels with a real radical sign
+  const lab = el ? tr('particle: radius ','입자: 반지름 ') : tr('photon: radius ','광자: 반지름 ');
+  sqrtLabel(c, W-14, 30, 17, lab, el, C.muted);
+  c.fillStyle = C.muted; c.font = '13px '+SANS; c.textAlign = 'right';
+  c.fillText(el ? tr('equal ΔE → thinner and thinner shells','같은 ΔE → 점점 얇아지는 껍질') : tr('equal ΔE → shells of equal width','같은 ΔE → 폭이 같은 껍질'), W-14, 54);
+  c.fillText(tr('drag to rotate','끌어서 돌리기'), W-14, H-12);
+}
+(function(){ const cv = $('sCv');
+  cv.style.touchAction = 'none'; cv.style.cursor = 'grab';
+  cv.addEventListener('pointerdown', e => { OV.drag = [e.clientX, e.clientY, OV.yaw, OV.pitch]; OV.spin = false; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; });
+  cv.addEventListener('pointermove', e => { if (!OV.drag) return; const [x0,y0,yw,pt] = OV.drag; OV.yaw = yw - (e.clientX-x0)*0.01; OV.pitch = Math.max(-0.2, Math.min(1.3, pt + (e.clientY-y0)*0.01)); octRender(); });
+  const end = () => { OV.drag = null; cv.style.cursor = 'grab'; }; cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  new IntersectionObserver(es => es.forEach(e => OV.vis = e.isIntersecting)).observe(cv);
+  let last = performance.now(); (function loop(now){ if (OV.spin && OV.vis && sCtx){ OV.yaw += (now-last)/1000*0.25; octRender(); } last = now; requestAnimationFrame(loop); })(performance.now());
+})();
 
 /* ================= LAYOUT ================= */
 let boxCtx, dCtx, pCtx, rCtx, sCtx, hCtx;
@@ -667,8 +722,8 @@ window.I18N_KO={
 "k53": "3차원 상자 속 상태 세기",
 "k54": "한 변이 \\(L\\)인 정육면체에서는 방향마다 \\(k_i = \\pi n_i/L\\)로 양자화되므로 \\(p = \\frac{h}{2L}\\sqrt{n_x^2 + n_y^2 + n_z^2}\\)이고,",
 "k55": "\\((n_x, n_y, n_z)\\) 공간에서 에너지가 일정한 면은 두 경우 모두 구면입니다. 다만 반지름 \\(n\\)이 입자에서는 \\(E^{1/2}\\)로, 광자에서는 \\(E\\)로 늘어납니다. 구의 8분의 1 안의 격자점 수 \\(N = \\frac18\\cdot\\frac{4\\pi}{3}n^3\\)(광자는 편광 때문에 2배)을 \\(V = L^3\\)으로 세면",
-"k56": "광자의 경우 \\(E = h\\nu\\)로 바꾸면 \\(g(\\nu)\\,d\\nu = \\frac{8\\pi V\\nu^2}{c^3}d\\nu\\)로, 플랑크 복사 법칙에 들어가는 바로 그 모드 수입니다. 일반적으로 3차원에서 \\(E \\propto p^s\\)이면 \\(g(E) \\propto E^{3/s - 1}\\)이고, 압력과 에너지 밀도 \\(u\\) 사이에 \\(P = \\frac{s}{3}u\\)가 성립합니다.",
-"k57": "\\(n\\) 공간의 단면 \\(n_z = 1\\). 번갈아 칠한 색은 폭 \\(\\Delta E\\)가 같은 에너지 구간입니다: 입자는 바깥으로 갈수록 고리가 얇아지고, 광자는 고리 폭이 그대로입니다.",
+"k56": "광자의 경우 \\(E = hf\\)로 바꾸면 \\(g(f)\\,df = \\frac{8\\pi Vf^2}{c^3}df\\)로, 플랑크 복사 법칙에 들어가는 바로 그 모드 수입니다. 일반적으로 3차원에서 \\(E \\propto p^s\\)이면 \\(g(E) \\propto E^{3/s - 1}\\)이고, 압력과 에너지 밀도 \\(u\\) 사이에 \\(P = \\frac{s}{3}u\\)가 성립합니다.",
+"k57": "3차원으로 그린 \\(n\\) 공간의 8분의 1 (끌어서 돌리기). 번갈아 칠한 색은 에너지 폭 \\(\\Delta E\\)가 같은 껍질이며 최대 12개까지 그립니다: 입자는 바깥으로 갈수록 껍질이 얇아지고, 광자는 껍질 폭이 그대로입니다.",
 "k58": "전자, \\(E \\propto n^2\\)",
 "k59": "광자, \\(E \\propto n\\)",
 "k60": "<span class=\"lt\">에너지 구간 수<\/span>",
@@ -679,7 +734,7 @@ window.I18N_KO={
 "k65": "정리",
 "k66": "<tr><th><\/th><th>질량 있는 입자 (비상대론적)<\/th><th>광자<\/th><\/tr>\n      <tr><td>지배 방정식<\/td><td>슈뢰딩거 (시간 1차, 공간 2차)<\/td><td>파동방정식 (시간 2차, 공간 2차)<\/td><\/tr>\n      <tr><td>분산관계<\/td><td>\\(\\omega = \\hbar k^2/2m\\)<\/td><td>\\(\\omega = ck\\)<\/td><\/tr>\n      <tr><td>\\(E(p)\\)<\/td><td>\\(p^2/2m\\) (\\(s = 2\\))<\/td><td>\\(pc\\) (\\(s = 1\\))<\/td><\/tr>\n      <tr><td>1차원 상자 준위<\/td><td>\\(E_n \\propto n^2\\)<\/td><td>\\(E_n \\propto n\\)<\/td><\/tr>\n      <tr><td>3차원 상태밀도<\/td><td>\\(g(E) \\propto E^{1/2}\\)<\/td><td>\\(g(E) \\propto E^2\\)<\/td><\/tr>\n      <tr><td>압력<\/td><td>\\(P = \\frac23 u\\)<\/td><td>\\(P = \\frac13 u\\)<\/td><\/tr>\n      <tr><td>고전/열평형 결과<\/td><td>이상기체 \\(U = \\frac32 Nk_{\\mathrm{B}}T\\)<\/td><td>슈테판–볼츠만 \\(u \\propto T^4\\)<\/td><\/tr>",
 "k67": "상자는 두 경우 모두 운동량을 똑같이 \\(p_n = nh/2L\\)로 양자화합니다. 에너지 준위가 \\(n^2\\)이냐 \\(n\\)이냐의 차이, 나아가 상태밀도가 \\(E^{1/2}\\)이냐 \\(E^2\\)이냐의 차이는 모두 파동방정식에서 시간 미분과 공간 미분의 차수 비(슈뢰딩거 1 : 2, 맥스웰 2 : 2)가 정하는 분산관계에서 나옵니다.",
-"k68": "이 상태밀도가 어디로 이어지는지는 함께 보는 데모에서 확인하세요: <a href=\"https://lshlj82.github.io/degenerate-fermi-gas/\">축퇴된 페르미 기체<\/a>(\\(g \\propto \\sqrt{\\varepsilon}\\))와 <a href=\"https://lshlj82.github.io/photon-statistics/\">광자 통계<\/a>(\\(g \\propto \\nu^2\\)).",
+"k68": "이 상태밀도가 어디로 이어지는지는 함께 보는 데모에서 확인하세요: <a href=\"https://lshlj82.github.io/degenerate-fermi-gas/\">축퇴된 페르미 기체<\/a>(\\(g \\propto \\sqrt{\\varepsilon}\\))와 <a href=\"https://lshlj82.github.io/photon-statistics/\">광자 통계<\/a>(\\(g \\propto f^2\\)).",
 "k69": "이상훈 교수의 가이드에 따라 Claude Opus 5.5가 만들었습니다: 통계역학 보충 노트 “입자와 광자의 에너지–운동량 관계는 어디서 오는가: 슈뢰딩거 방정식 vs. 맥스웰 파동방정식”."
 };
 (function(){
