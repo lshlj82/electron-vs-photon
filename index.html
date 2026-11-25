@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<!-- lang-toggle:head -->
+<script>(function(){var l='en';try{if(localStorage.getItem('lshlj82-demo-lang')==='ko')l='ko'}catch(e){}window.LANG=l;document.documentElement.dataset.lang=l;window.tr=function(en,ko){return window.LANG==='ko'&&ko!=null?ko:en};})();</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+#langBtn{position:fixed;z-index:21;top:calc(env(safe-area-inset-top,0px) + 12px);right:calc(env(safe-area-inset-right,0px) + 60px);
+  min-width:40px;height:40px;padding:0 10px;border-radius:20px;display:grid;place-items:center;cursor:pointer;font:600 14px/1 system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  background:var(--lb-bg,rgba(255,255,255,.92));color:var(--lb-fg,#1d2633);border:1px solid var(--lb-bd,rgba(20,30,45,.18));box-shadow:0 1px 4px rgba(0,0,0,.12)}
+#langBtn:hover{border-color:currentColor}
+#langBtn:focus-visible{outline:2px solid #3b82f6;outline-offset:2px}
+:root[data-theme="dark"] #langBtn{--lb-bg:rgba(22,28,38,.92);--lb-fg:#e8eef6;--lb-bd:rgba(255,255,255,.18)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #langBtn{--lb-bg:rgba(22,28,38,.92);--lb-fg:#e8eef6;--lb-bd:rgba(255,255,255,.18)}}
+:root[data-lang="ko"] body{word-break:keep-all}
+:root[data-lang="ko"]{--sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;--serif:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;--ui-font:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif}
+:root[data-lang="ko"] body{font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif}
+
+@media print{#langBtn{display:none}}
+</style>
+<!-- lang-toggle:head-end -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Electrons and Photons, Interactively</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#EDF1F4; --surface:#F8FAFC; --ink:#15202B; --muted:#56636F; --rule:#C5CFD7; --band:#E2E8ED;
+  --fermion:#2B67D1; --sea:#BFD3F5; --hot:#B5731A; --approx:#2E7A57; --res:#8B98A4; --down:#1E9483;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E151C; --surface:#141D26; --ink:#E3E9EE; --muted:#97A4B0; --rule:#2B3743; --band:#1B2631;
+    --fermion:#6E9FF2; --sea:#24406E; --hot:#E8B04F; --approx:#5CC593; --res:#5B6976; --down:#4FD1C0;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E151C; --surface:#141D26; --ink:#E3E9EE; --muted:#97A4B0; --rule:#2B3743; --band:#1B2631;
+  --fermion:#6E9FF2; --sea:#24406E; --hot:#E8B04F; --approx:#5CC593; --res:#5B6976; --down:#4FD1C0;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--serif);font-size:1.1rem;line-height:1.62;-webkit-font-smoothing:antialiased}
+img,canvas{max-width:100%}
+a{color:var(--fermion)}
+:focus-visible{outline:2px solid var(--fermion);outline-offset:3px;border-radius:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 clamp(1rem,4vw,2.5rem)}
+.prose{max-width:40rem}
+
+header.hero{padding:clamp(2.5rem,7vw,5rem) 0 1.5rem}
+.credit{font-family:var(--sans);font-size:.9rem;color:var(--muted);margin:0 0 1.25rem}
+h1{font-weight:500;font-size:clamp(2.5rem,7.5vw,5.25rem);line-height:.98;letter-spacing:-.025em;margin:0 0 1.25rem;max-width:12ch}
+.lede{font-size:clamp(1.15rem,2.2vw,1.35rem);max-width:37rem;margin:0}
+
+section{padding:clamp(2.5rem,6vw,4rem) 0;border-top:1px solid var(--rule)}
+section:first-of-type{border-top:0;padding-top:1rem}
+h2{font-weight:500;font-size:clamp(1.7rem,3.5vw,2.35rem);line-height:1.1;letter-spacing:-.015em;margin:0 0 1rem}
+h3{font-family:var(--sans);font-weight:600;font-size:1rem;margin:1.75rem 0 .5rem}
+p{margin:0 0 1rem}
+.note{font-size:.95rem;color:var(--muted)}
+
+.eq{display:block;text-align:center;margin:1.25rem 0;overflow-x:auto;overflow-y:hidden;padding:.25rem 0}
+.eq.multi{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;column-gap:2.2em;row-gap:.65rem}
+.boxed.multi{display:inline-flex;flex-wrap:wrap;justify-content:center;align-items:center;column-gap:2em;row-gap:.6rem;max-width:100%}
+.eqp{max-width:100%}
+.eqp.sep{margin-left:1.85em}
+.multi:not(.chain) > .eqp.cont{margin-left:-1.85em}
+mjx-container{color:inherit}
+mjx-container[display="true"]{margin:0 !important}
+.stats mjx-container,.legend mjx-container,.cap mjx-container,.ctl small mjx-container{font-size:105%}
+.ctl output mjx-container{font-size:95%}
+.boxed{display:inline-block;border:1.5px solid var(--fermion);padding:.5rem 1rem;border-radius:3px}
+.boxed.h{border-color:var(--hot)}
+
+.fig{display:grid;grid-template-columns:minmax(0,1fr) 17.5rem;gap:1.5rem;align-items:start;margin-top:1.5rem}
+@media (max-width:820px){.fig{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:1rem}
+.canvas-holder{background:var(--surface);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+canvas{display:block;width:100%}
+
+.ctl{font-family:var(--sans);font-size:.9rem;margin-bottom:1.1rem}
+.ctl:last-child{margin-bottom:0}
+.ctl label{display:flex;justify-content:space-between;align-items:baseline;gap:.75rem;font-weight:500;margin-bottom:.3rem}
+.ctl .lt{flex:1 1 auto}
+.ctl output{flex:0 0 auto;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--muted);font-weight:400}
+.ctl small{display:block;color:var(--muted);line-height:1.4;margin-top:.25rem}
+input[type=range]{width:100%;accent-color:var(--fermion);margin:0}
+.btns{display:flex;flex-wrap:wrap;gap:.5rem}
+button{font-family:var(--sans);font-size:.88rem;font-weight:500;color:var(--ink);background:transparent;border:1px solid var(--rule);border-radius:4px;padding:.45rem .8rem;cursor:pointer}
+button:hover{border-color:var(--ink)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.stats{font-family:var(--sans);font-size:.9rem;display:grid;grid-template-columns:auto auto;gap:.35rem 1rem;margin:0}
+.stats dt{color:var(--muted)}
+.stats dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
+.stats .sep{grid-column:1/-1;border-top:1px solid var(--rule);margin:.3rem 0}
+.legend{font-family:var(--sans);font-size:.85rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:1rem;margin:.6rem 0 0}
+.swatch{display:inline-block;width:.75rem;height:.75rem;border-radius:2px;vertical-align:-1px;margin-right:.35rem}
+.swatch.line{height:3px;width:1.1rem;vertical-align:3px;border-radius:0}
+.swatch.dash{height:0;width:1.1rem;vertical-align:3px;border-radius:0;border-top:3px dashed}
+.cap{font-family:var(--sans);font-size:.85rem;color:var(--muted);margin:.5rem .25rem 0}
+.verdict{font-family:var(--sans);font-size:1rem;font-weight:500;margin:.85rem 0 0;max-width:40rem}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1.25rem}
+@media (max-width:700px){.two{grid-template-columns:1fr}}
+
+footer{border-top:1px solid var(--rule);padding:2rem 0 3rem;font-family:var(--sans);font-size:.9rem;color:var(--muted)}
+footer p{margin:0 0 .4rem}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+  svg: { fontCache: 'global' },
+  options: { enableMenu: false }
+};
+</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>
+<script>try { const t = localStorage.getItem("netsci-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<style>
+button.theme-btn{position:fixed; z-index:20; top:calc(env(safe-area-inset-top, 0px) + 12px); right:calc(env(safe-area-inset-right, 0px) + 12px);
+  width:40px; height:40px; padding:0; border-radius:50%; display:grid; place-items:center; cursor:pointer;
+  background:var(--surface); color:var(--ink); border:1px solid var(--rule); box-shadow:0 1px 4px rgba(0,0,0,.12)}
+button.theme-btn:hover{background:var(--surface); color:var(--ink); border-color:var(--ink)}
+button.theme-btn:focus-visible{outline:3px solid var(--ink); outline-offset:2px}
+.hero .credit{padding-right:48px}
+button.theme-btn svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+</style>
+<style id="ko-emphasis">/* Korean has no true italics: slanted Hangul reads as weak, so Korean emphasis is bold and other Korean italic text stays upright (math and <i> variables keep their slant) */
+html :lang(ko):not(i, i *, var, var *, .katex, .katex *, mjx-container, mjx-container *, svg, svg *), html[data-lang="ko"] :not(i, i *, var, var *, .katex, .katex *, mjx-container, mjx-container *, svg, svg *){font-style:normal}
+html :lang(ko) em, html[data-lang="ko"] em{font-weight:600}
+</style>
+<style>
+table.cmp{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:.92rem;margin:.5rem 0 1.25rem}
+table.cmp th,table.cmp td{padding:.45rem .6rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+table.cmp th{font-weight:600}
+table.cmp td:first-child{color:var(--muted)}
+.boxnote{background:var(--surface);border:1px solid var(--rule);border-left:4px solid var(--fermion);border-radius:4px;padding:.8rem 1rem}
+.prose .tablewrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<button id="themeBtn" class="theme-btn" type="button" aria-label="Switch to light mode"></button>
+<div class="wrap">
+
+<header class="hero">
+  <p class="credit" data-k="k1">An interactive demo created by Claude Opus 5.5, following the guidance of Sang Hoon Lee (supplementary note for statistical mechanics)</p>
+  <h1 data-k="k2">Electrons and Photons</h1>
+  <p class="lede" data-k="k3">Put an electron and a photon in the same box and both have the same allowed wavelengths and momenta, yet the energy levels of one grow as \(n^2\) and of the other as \(n\). The difference comes from a single line: \(E = p^2/2m\) for a massive particle and \(E = pc\) for a photon. That line, in turn, comes from the orders of the time and space derivatives in the wave equations the two obey.</p>
+</header>
+
+<!-- ============ THE BOX ============ -->
+<section id="box" aria-labelledby="h-box">
+  <h2 id="h-box" data-k="k4">Same box, same momenta, different energies</h2>
+  <div class="prose">
+    <p data-k="k5">Trap either one in a box (or a cavity) of length \(L\). The boundary condition is the same, a standing wave fixed at both ends, so the allowed wavelengths and momenta are the same too:</p>
+    <div class="eq multi"><span class="eqp">\( \displaystyle \lambda_n = \frac{2L}{n}, \)</span><span class="eqp">\( \displaystyle p_n = \frac{h}{\lambda_n} = \frac{h}{2L}\,n, \qquad n = 1, 2, 3, \ldots \)</span></div>
+    <p data-k="k6">The energies are not:</p>
+    <div class="eq multi"><span class="eqp">\( \displaystyle \text{massive particle: } E_n = \frac{p_n^2}{2m} = \frac{h^2}{8mL^2}\,n^2, \)</span><span class="eqp">\( \displaystyle \text{photon: } E_n = p_n c = \frac{hc}{2L}\,n. \)</span></div>
+    <p data-k="k7">The quantization of momentum is identical; everything else follows from how the energy depends on the momentum. (Do not try \(\tfrac12 mv^2\) for a photon: it gives \(\tfrac12 \cdot 0 \cdot c^2 = 0\). That formula only holds for slow massive particles.)</p>
+  </div>
+  <div class="fig">
+    <div>
+      <div class="canvas-holder"><canvas id="boxCv" aria-label="Standing wave in a box and the energy ladders of an electron and a photon"></canvas></div>
+      <div class="legend" data-k="k8">
+        <span><span class="swatch" style="background:var(--fermion)"></span>Electron, \(E_n \propto n^2\)</span>
+        <span><span class="swatch" style="background:var(--hot)"></span>Photon, \(E_n \propto n\)</span>
+      </div>
+      <p class="cap" data-k="k9">Both ladders are drawn on the same scale, in units of their own ground-state energy \(E_1\).</p>
+    </div>
+    <div class="panel">
+      <div class="ctl">
+        <label for="bN"><span data-k="k10"><span class="lt">Mode number \(n\)</span></span> <output id="bNOut"></output></label>
+        <input type="range" id="bN" min="1" max="8" step="1" value="3">
+      </div>
+      <dl class="stats">
+        <dt data-k="k11">Wavelength \(\lambda_n\)</dt><dd id="bLam">–</dd>
+        <dt data-k="k12">Momentum \(p_n\)</dt><dd id="bP">–</dd>
+        <dt class="sep"></dt>
+        <dt data-k="k13">Electron \(E_n/E_1\)</dt><dd id="bEe">–</dd>
+        <dt data-k="k14">Photon \(E_n/E_1\)</dt><dd id="bEp">–</dd>
+        <dt data-k="k15">Next gap, electron</dt><dd id="bGe">–</dd>
+        <dt data-k="k16">Next gap, photon</dt><dd id="bGp">–</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DISPERSION ============ -->
+<section id="dispersion" aria-labelledby="h-disp">
+  <h2 id="h-disp" data-k="k17">From wave equation to dispersion relation</h2>
+  <div class="prose">
+    <p data-k="k18">A linear wave equation with constant coefficients has plane waves \(\psi = A\,e^{i(\mathbf{k}\cdot\mathbf{r} - \omega t)}\) as solutions. On a plane wave, derivatives become multiplications,</p>
+    <div class="eq">\( \displaystyle \frac{\partial}{\partial t} \to -i\omega, \qquad \nabla \to i\mathbf{k}, \qquad \nabla^2 \to -k^2, \)</div>
+    <p data-k="k19">so the differential equation becomes an algebraic relation between \(\omega\) and \(k\), the <b>dispersion relation</b> \(\omega(k)\). With \(E = \hbar\omega\) (Planck–Einstein) and \(p = \hbar k\) (de Broglie), the dispersion relation is the energy–momentum relation \(E(p)\).</p>
+    <p data-k="k20">The free Schrödinger equation is first order in time and second order in space:</p>
+    <div class="eq multi"><span class="eqp">\( \displaystyle i\hbar\frac{\partial\psi}{\partial t} = -\frac{\hbar^2}{2m}\nabla^2\psi \)</span><span class="eqp">\( \displaystyle \Longrightarrow\ \hbar\omega = \frac{\hbar^2k^2}{2m} \)</span><span class="eqp">\( \displaystyle \Longrightarrow\ E = \frac{p^2}{2m}. \)</span></div>
+    <p data-k="k21">In fact the equation was built that way, by substituting \(E \to i\hbar\partial_t\) and \(\mathbf{p} \to -i\hbar\nabla\) into the classical \(E = p^2/2m\): \(E \propto p^2\) is written into its form. Maxwell's equations in vacuum give, after taking the curl of Faraday's law, a wave equation that is second order in both time and space:</p>
+    <div class="eq multi"><span class="eqp">\( \displaystyle \nabla^2\mathbf{E} - \frac{1}{c^2}\frac{\partial^2\mathbf{E}}{\partial t^2} = 0 \)</span><span class="eqp">\( \displaystyle \Longrightarrow\ \omega = ck \)</span><span class="eqp">\( \displaystyle \Longrightarrow\ E = pc. \)</span></div>
+    <p data-k="k22">This is the classical \(\lambda f = c\) again, and with \(E = hf\) and \(p = h/\lambda\) it gives \(E = pc = hf\). The rule of thumb: if the time derivative has order \(a\) and the space derivative order \(b\), then \(\omega^a \propto k^b\), so \(E^a \propto p^b\). The condition \(\nabla\cdot\mathbf{E} = 0\) makes light transverse, \(\mathbf{k}\cdot\mathbf{E} = 0\), so every \(\mathbf{k}\) has <b>two</b> polarizations.</p>
+    <p data-k="k23">The two relations differ in more than the exponent. A wave crest moves at the phase velocity \(v_{\text{ph}} = \omega/k\), a wave packet at the group velocity \(v_{\text{g}} = d\omega/dk\). For the electron \(v_{\text{ph}} = \hbar k/2m = v/2\) but \(v_{\text{g}} = \hbar k/m = p/m = v\), the classical velocity. For light both are \(c\).</p>
+  </div>
+  <div class="fig">
+    <div>
+      <div class="canvas-holder"><canvas id="dCv" aria-label="Dispersion relations omega of k for an electron and a photon, with phase and group velocities"></canvas></div>
+      <div class="legend" data-k="k24">
+        <span><span class="swatch line" style="background:var(--fermion)"></span>Electron, \(\omega = \hbar k^2/2m\)</span>
+        <span><span class="swatch line" style="background:var(--hot)"></span>Photon, \(\omega = ck\)</span>
+        <span><span class="swatch dash" style="border-color:var(--muted)"></span>Slope from the origin: \(v_{\text{ph}}\)</span>
+        <span><span class="swatch dash" style="border-color:var(--approx)"></span>Tangent: \(v_{\text{g}}\)</span>
+      </div>
+      <p class="cap" data-k="k25">Units with \(c = 1\) and \(\hbar/m = 1\). At \(k = 1\) the electron's tangent is parallel to the photon line: its group velocity equals \(c\) there (where, of course, the nonrelativistic formula is no longer valid).</p>
+    </div>
+    <div class="panel">
+      <div class="ctl">
+        <label for="dK"><span data-k="k26"><span class="lt">Wave number \(k\)</span></span> <output id="dKOut"></output></label>
+        <input type="range" id="dK" min="0.1" max="2.4" step="0.01" value="0.8">
+      </div>
+      <dl class="stats">
+        <dt data-k="k27">Electron \(v_{\text{ph}}\)</dt><dd id="dEph">–</dd>
+        <dt data-k="k28">Electron \(v_{\text{g}}\)</dt><dd id="dEg">–</dd>
+        <dt class="sep"></dt>
+        <dt data-k="k29">Photon \(v_{\text{ph}}\)</dt><dd id="dPph">–</dd>
+        <dt data-k="k30">Photon \(v_{\text{g}}\)</dt><dd id="dPg">–</dd>
+      </dl>
+      <p class="cap" style="margin:.75rem 0 0" data-k="k31">For the electron the tangent is always twice as steep as the line from the origin: \(v_{\text{g}} = 2v_{\text{ph}}\).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WAVE PACKETS ============ -->
+<section id="packet" aria-labelledby="h-packet">
+  <h2 id="h-packet" data-k="k32">Dispersion: packets that spread</h2>
+  <div class="prose">
+    <p data-k="k33">Build a localized packet by adding plane waves with wave numbers around \(k_0\). If every wave travels at the same speed, as light does in vacuum, the packet keeps its shape forever. If the speed depends on the wavelength, as it does for the Schrödinger equation, the components drift apart and the packet spreads. Watch the crests too: for the electron they move at half the speed of the envelope, appearing at its back and vanishing at its front.</p>
+  </div>
+  <div class="fig">
+    <div>
+      <div class="canvas-holder"><canvas id="pCv" aria-label="Wave packets of an electron and a photon moving and, for the electron, spreading"></canvas></div>
+      <div class="legend" data-k="k34">
+        <span><span class="swatch line" style="background:var(--muted)"></span>Real part \(\mathrm{Re}\,\psi\)</span>
+        <span><span class="swatch line" style="background:var(--fermion)"></span>Envelope \(|\psi|\), electron</span>
+        <span><span class="swatch line" style="background:var(--hot)"></span>Envelope, photon</span>
+        <span>▲ one crest</span>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ctl btns"><button type="button" id="pPlay" aria-pressed="false">Play</button><button type="button" id="pReset" data-k="k36">Restart</button></div>
+      <div class="ctl">
+        <label for="pW"><span data-k="k37"><span class="lt">Initial width \(\sigma_0\)</span></span> <output id="pWOut"></output></label>
+        <input type="range" id="pW" min="0.3" max="1.5" step="0.05" value="0.6">
+        <span data-k="k38"><small>A narrower packet contains a wider range of \(k\), so it spreads faster.</small></span>
+      </div>
+      <dl class="stats">
+        <dt data-k="k39">Time \(t\)</dt><dd id="pT">–</dd>
+        <dt data-k="k40">Electron width \(\sigma/\sigma_0\)</dt><dd id="pSe">–</dd>
+        <dt data-k="k41">Photon width \(\sigma/\sigma_0\)</dt><dd id="pSp">1.00</dd>
+      </dl>
+      <p class="cap" style="margin:.75rem 0 0" data-k="k42">Both envelopes move at the same group velocity, \(v_{\text{g}} = 1\). The electron's width grows as \(\sigma(t) = \sigma_0\sqrt{1 + (\hbar t/2m\sigma_0^2)^2}\).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RELATIVISTIC BRIDGE ============ -->
+<section id="bridge" aria-labelledby="h-bridge">
+  <h2 id="h-bridge" data-k="k43">One relation, two limits</h2>
+  <div class="prose">
+    <p data-k="k44">Both results are limits of the relativistic relation</p>
+    <div class="eq">\( \displaystyle E^2 = p^2c^2 + m^2c^4, \)</div>
+    <p data-k="k45">which, with \(E \to i\hbar\partial_t\) and \(\mathbf{p} \to -i\hbar\nabla\), becomes the Klein–Gordon equation</p>
+    <div class="eq">\( \displaystyle \frac{1}{c^2}\frac{\partial^2\psi}{\partial t^2} - \nabla^2\psi + \frac{m^2c^2}{\hbar^2}\psi = 0. \)</div>
+    <p data-k="k46">For \(m = 0\) the last term vanishes and this is Maxwell's wave equation: \(E = pc\). For \(m > 0\) and \(p \ll mc\), \(E = mc^2\sqrt{1 + p^2/m^2c^2} \approx mc^2 + p^2/2m\). Peel off the fast oscillation of the rest energy, \(\psi = \phi\,e^{-imc^2t/\hbar}\), and drop the second time derivative of \(\phi\): what is left is exactly the Schrödinger equation \(i\hbar\partial_t\phi = -\frac{\hbar^2}{2m}\nabla^2\phi\). The Schrödinger equation is first order in time only because of this nonrelativistic approximation, and that approximation is what produces \(E \propto p^2\). A photon has no rest energy to approximate around, so the equation stays second order in time and \(E \propto p\).</p>
+  </div>
+  <div class="fig">
+    <div>
+      <div class="canvas-holder"><canvas id="rCv" aria-label="Kinetic energy against momentum for the relativistic relation, with the nonrelativistic and massless limits"></canvas></div>
+      <div class="legend" data-k="k47">
+        <span><span class="swatch line" style="background:var(--ink)"></span>\(E - mc^2 = \sqrt{p^2c^2 + m^2c^4} - mc^2\)</span>
+        <span><span class="swatch dash" style="border-color:var(--fermion)"></span>\(p^2/2m\)</span>
+        <span><span class="swatch dash" style="border-color:var(--hot)"></span>\(pc\)</span>
+      </div>
+      <p class="verdict" id="rVerdict"></p>
+    </div>
+    <div class="panel">
+      <div class="ctl">
+        <label for="rM"><span data-k="k48"><span class="lt">Mass \(m\)</span></span> <output id="rMOut"></output></label>
+        <input type="range" id="rM" min="0" max="2" step="0.01" value="1">
+      </div>
+      <div class="ctl">
+        <label for="rP"><span data-k="k49"><span class="lt">Momentum \(p\)</span></span> <output id="rPOut"></output></label>
+        <input type="range" id="rP" min="0" max="4" step="0.01" value="0.5">
+      </div>
+      <dl class="stats">
+        <dt data-k="k50">\(E - mc^2\), exact</dt><dd id="rEx">–</dd>
+        <dt>\(p^2/2m\)</dt><dd id="rNr">–</dd>
+        <dt>\(pc\)</dt><dd id="rUr">–</dd>
+        <dt class="sep"></dt>
+        <dt data-k="k51">Group velocity \(dE/dp\)</dt><dd id="rVg">–</dd>
+      </dl>
+      <p class="cap" style="margin:.75rem 0 0" data-k="k52">Units with \(c = 1\). The shading marks \(p &lt; mc\), where the nonrelativistic formula works.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DENSITY OF STATES ============ -->
+<section id="dos" aria-labelledby="h-dos">
+  <h2 id="h-dos" data-k="k53">Counting states in a 3D box</h2>
+  <div class="prose">
+    <p data-k="k54">In a cube of side \(L\), each direction is quantized, \(k_i = \pi n_i/L\), so \(p = \frac{h}{2L}\sqrt{n_x^2 + n_y^2 + n_z^2}\) and</p>
+    <div class="eq multi"><span class="eqp">\( \displaystyle \text{particle: } E = \frac{h^2}{8mL^2}\left(n_x^2 + n_y^2 + n_z^2\right), \)</span><span class="eqp">\( \displaystyle \text{photon: } E = \frac{hc}{2L}\sqrt{n_x^2 + n_y^2 + n_z^2}. \)</span></div>
+    <p data-k="k55">Surfaces of constant energy in \((n_x, n_y, n_z)\) space are spheres in both cases, but the radius \(n\) grows as \(E^{1/2}\) for the particle and as \(E\) for the photon. Counting the lattice points in an eighth of a sphere, \(N = \frac18\cdot\frac{4\pi}{3}n^3\) (times 2 for the photon's polarizations), with \(V = L^3\):</p>
+    <div class="eq multi"><span class="eqp">\( \displaystyle \text{particle: } g(E) = \frac{V}{4\pi^2}\left(\frac{2m}{\hbar^2}\right)^{3/2}E^{1/2}, \)</span><span class="eqp">\( \displaystyle \text{photon: } g(E) = \frac{V}{\pi^2\hbar^3c^3}\,E^2. \)</span></div>
+    <p data-k="k56">For photons, with \(E = h\nu\), this is \(g(\nu)\,d\nu = \frac{8\pi V\nu^2}{c^3}d\nu\), the mode count in Planck's radiation law. In general, \(E \propto p^s\) in three dimensions gives \(g(E) \propto E^{3/s - 1}\) and a pressure \(P = \frac{s}{3}u\), where \(u\) is the energy density.</p>
+  </div>
+  <div class="fig">
+    <div>
+      <div class="canvas-holder"><canvas id="sCv" aria-label="A slice of n-space with lattice points colored by equal-width energy bins"></canvas></div>
+      <p class="cap" data-k="k57">A slice \(n_z = 1\) of \(n\)-space. Alternate colors mark energy bins of equal width \(\Delta E\): for the particle the rings get thinner outward, for the photon they keep the same width.</p>
+      <div class="canvas-holder" style="margin-top:1rem"><canvas id="hCv" aria-label="Number of states per energy bin from counting lattice points, compared with the formula for the density of states"></canvas></div>
+      <p class="verdict" id="sVerdict"></p>
+    </div>
+    <div class="panel">
+      <div class="ctl btns" role="group" aria-label="Particle">
+        <button type="button" data-sp="e" aria-pressed="true" data-k="k58">Electron, \(E \propto n^2\)</button>
+        <button type="button" data-sp="p" data-k="k59">Photon, \(E \propto n\)</button>
+      </div>
+      <div class="ctl">
+        <label for="sB"><span data-k="k60"><span class="lt">Energy bins</span></span> <output id="sBOut"></output></label>
+        <input type="range" id="sB" min="6" max="40" step="1" value="16">
+      </div>
+      <dl class="stats">
+        <dt data-k="k61">States counted</dt><dd id="sCnt">–</dd>
+        <dt data-k="k62">Formula \(N(E_{\max})\)</dt><dd id="sForm">–</dd>
+        <dt data-k="k63">\(g(E) \propto\)</dt><dd id="sExp">–</dd>
+      </dl>
+      <p class="cap" style="margin:.75rem 0 0" data-k="k64">States are counted exactly on the lattice \(n_i = 1, \ldots, 60\) up to the largest energy whose sphere still fits; spin is left out for the electron. The count falls a little short of the formula because the planes \(n_i = 0\) are not allowed; the shortfall shrinks for larger boxes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SUMMARY ============ -->
+<section id="summary" aria-labelledby="h-sum">
+  <h2 id="h-sum" data-k="k65">Summary</h2>
+  <div class="prose">
+    <div class="tablewrap"><table class="cmp" data-k="k66">
+      <tr><th></th><th>Massive particle (nonrelativistic)</th><th>Photon</th></tr>
+      <tr><td>Wave equation</td><td>Schrödinger (time 1st, space 2nd order)</td><td>Wave equation (time 2nd, space 2nd order)</td></tr>
+      <tr><td>Dispersion relation</td><td>\(\omega = \hbar k^2/2m\)</td><td>\(\omega = ck\)</td></tr>
+      <tr><td>\(E(p)\)</td><td>\(p^2/2m\) (\(s = 2\))</td><td>\(pc\) (\(s = 1\))</td></tr>
+      <tr><td>Levels in a 1D box</td><td>\(E_n \propto n^2\)</td><td>\(E_n \propto n\)</td></tr>
+      <tr><td>3D density of states</td><td>\(g(E) \propto E^{1/2}\)</td><td>\(g(E) \propto E^2\)</td></tr>
+      <tr><td>Pressure</td><td>\(P = \frac23 u\)</td><td>\(P = \frac13 u\)</td></tr>
+      <tr><td>Thermal result</td><td>Ideal gas \(U = \frac32 Nk_{\mathrm{B}}T\)</td><td>Stefan–Boltzmann \(u \propto T^4\)</td></tr>
+    </table></div>
+    <p class="boxnote" data-k="k67">A box quantizes the momentum the same way for both, \(p_n = nh/2L\). Whether the levels go as \(n^2\) or \(n\), and whether the density of states goes as \(E^{1/2}\) or \(E^2\), all comes from the dispersion relation set by the ratio of the orders of the time and space derivatives in the wave equation: 1 : 2 for Schrödinger, 2 : 2 for Maxwell.</p>
+    <p data-k="k68">See where these densities of states lead in the companion demos: <a href="https://lshlj82.github.io/degenerate-fermi-gas/">degenerate Fermi gases</a> (\(g \propto \sqrt{\varepsilon}\)) and <a href="https://lshlj82.github.io/photon-statistics/">photon statistics</a> (\(g \propto \nu^2\)).</p>
+  </div>
+</section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p data-k="k69">Created by Claude Opus 5.5, following the guidance of Sang Hoon Lee: a supplementary note for statistical mechanics, “Where do the energy–momentum relations of particles and photons come from? The Schrödinger equation vs. Maxwell's wave equation.”</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+const $ = id => document.getElementById(id);
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let C = {};
+function readColors(){ const cs = getComputedStyle(document.documentElement);
+  ['bg','surface','ink','muted','rule','band','fermion','sea','hot','approx','res','down'].forEach(k => C[k] = cs.getPropertyValue('--'+k).trim()); }
+readColors();
+const SANS = '"Instrument Sans", "IBM Plex Sans KR", system-ui, sans-serif';
+const SERIF = '"Newsreader", "IBM Plex Sans KR", Georgia, serif';
+function fit(cv, LW, LH){ const w = cv.parentElement.clientWidth || LW, hgt = w*LH/LW; cv.style.height = hgt + 'px';
+  const d = window.devicePixelRatio || 1; cv.width = Math.round(w*d); cv.height = Math.round(hgt*d);
+  const ctx = cv.getContext('2d'); const s = w*d/LW; ctx.setTransform(s,0,0,s,0,0); return ctx; }
+function rich(c, x, y, size, parts, align){ c.save(); c.textAlign = 'left';
+  const fontOf = st => st==='i' ? 'italic '+size+'px '+SERIF : st==='isub' ? 'italic '+(size*0.7)+'px '+SERIF : (st==='sub'||st==='sup') ? (size*0.7)+'px '+SERIF : st==='s' ? (size*0.88)+'px '+SANS : size+'px '+SERIF;
+  const widths = parts.map(([t,st]) => { c.font = fontOf(st); return c.measureText(t).width; }); const total = widths.reduce((a,b)=>a+b,0);
+  let cx = align==='center' ? x-total/2 : align==='right' ? x-total : x;
+  parts.forEach(([t,st],i) => { c.font = fontOf(st); const dy = (st==='sub'||st==='isub') ? size*0.25 : st==='sup' ? -size*0.38 : 0; c.fillText(t, cx, y+dy); cx += widths[i]; });
+  c.restore(); return total; }
+function axes(c, L, T, R, B, W, H){ c.strokeStyle = C.muted; c.lineWidth = 1; c.beginPath(); c.moveTo(L,T); c.lineTo(L,H-B); c.lineTo(W-R,H-B); c.stroke(); }
+const f2 = x => x.toFixed(2);
+
+/* ================= 1. THE BOX ================= */
+const BX = {n:3, t:0};
+function boxRender(){
+  const c = boxCtx; if (!c) return;
+  const W=640, H=340, n=BX.n; c.clearRect(0,0,W,H); c.fillStyle=C.surface; c.fillRect(0,0,W,H);
+  $('bNOut').textContent = n;
+  // standing wave in the box (left)
+  const x0=30, x1=330, ym=170, A=70;
+  c.fillStyle=C.band; c.fillRect(x0-10, ym-A-30, 10, 2*A+60); c.fillRect(x1, ym-A-30, 10, 2*A+60);
+  c.strokeStyle=C.rule; c.lineWidth=1; c.beginPath(); c.moveTo(x0, ym); c.lineTo(x1, ym); c.stroke();
+  const ph = reduceMotion ? 1 : Math.cos(BX.t*2);
+  c.strokeStyle=C.ink; c.lineWidth=2.4; c.beginPath();
+  for (let i=0;i<=300;i++){ const x = x0 + (x1-x0)*i/300, y = ym - A*ph*Math.sin(n*Math.PI*i/300); i ? c.lineTo(x,y) : c.moveTo(x,y); } c.stroke();
+  c.globalAlpha=0.25; c.lineWidth=1.2; c.beginPath(); for (let i=0;i<=300;i++){ const x=x0+(x1-x0)*i/300, y=ym - A*Math.sin(n*Math.PI*i/300); i?c.lineTo(x,y):c.moveTo(x,y); } c.stroke();
+  c.beginPath(); for (let i=0;i<=300;i++){ const x=x0+(x1-x0)*i/300, y=ym + A*Math.sin(n*Math.PI*i/300); i?c.lineTo(x,y):c.moveTo(x,y); } c.stroke(); c.globalAlpha=1;
+  c.fillStyle=C.muted; c.font='13px '+SANS; c.textAlign='center';
+  c.fillText(tr('the same standing wave for both','둘 다 같은 정상파'), (x0+x1)/2, ym+A+42);
+  rich(c, (x0+x1)/2, ym-A-40, 16, [['λ','i'],['n','isub'],[' = 2','r'],['L','i'],['/','r'],[String(n),'r']], 'center');
+  // ladders (right)
+  const lx = [400, 530], top=26, bot=316, Y = e => bot - (e/64)*(bot-top);
+  c.strokeStyle=C.muted; c.lineWidth=1; c.beginPath(); c.moveTo(372, top-6); c.lineTo(372, bot); c.stroke();
+  c.textAlign='right'; c.font='12px '+SANS; c.fillStyle=C.muted; [0,16,32,48,64].forEach(e => c.fillText(e, 366, Y(e)+4));
+  rich(c, 368, top-10, 14, [['E','i'],[' / ','r'],['E','i'],['1','sub']], 'left');
+  [[lx[0], k => k*k, C.fermion, tr('electron','전자')], [lx[1], k => k, C.hot, tr('photon','광자')]].forEach(([x, f, col, lab]) => {
+    for (let k=1;k<=8;k++){ const e=f(k); if (e>64) break; const y=Y(e); c.strokeStyle=col; c.globalAlpha = k===n ? 1 : 0.45; c.lineWidth = k===n ? 3.5 : 1.6;
+      c.beginPath(); c.moveTo(x, y); c.lineTo(x+80, y); c.stroke(); c.globalAlpha=1; }
+    const e=f(n); c.fillStyle=col; c.font='600 13px '+SANS; c.textAlign='left'; c.fillText('n = '+n, x+84, Y(e)+4);
+    c.font='13px '+SANS; c.textAlign='center'; c.fillText(lab, x+40, bot+18); });
+  $('bLam').innerHTML = '2<i>L</i>/' + n; $('bP').innerHTML = n + ' <i>h</i>/2<i>L</i>';
+  $('bEe').textContent = n*n; $('bEp').textContent = n; $('bGe').textContent = (2*n+1) + ' E₁'; $('bGp').textContent = '1 E₁';
+}
+
+/* ================= 2. DISPERSION ================= */
+const DS = {k:0.8};
+function dispRender(){
+  const c = dCtx; if (!c) return;
+  const W=640, H=340, L=52, R=16, T=16, B=40, kmax=2.6, wmax=3.4, k=DS.k;
+  const X = v => L + v/kmax*(W-L-R), Y = v => H-B - v/wmax*(H-T-B);
+  c.clearRect(0,0,W,H); c.fillStyle=C.surface; c.fillRect(0,0,W,H);
+  c.font='12px '+SANS; c.fillStyle=C.muted; c.textAlign='center'; for (let v=0; v<=2.5; v+=0.5) c.fillText(v.toFixed(1), X(v), H-B+16);
+  c.textAlign='right'; for (let v=0; v<=3; v+=1){ c.fillText(v, L-6, Y(v)+4); c.strokeStyle=C.band; c.beginPath(); c.moveTo(L,Y(v)); c.lineTo(W-R,Y(v)); c.stroke(); }
+  rich(c, W-R, H-8, 15, [['k','i']], 'right'); rich(c, L+6, T+12, 15, [['ω','i']], 'left');
+  axes(c, L, T, R, B, W, H);
+  c.save(); c.beginPath(); c.rect(L, T, W-L-R, H-T-B); c.clip();
+  const curve = (f, col) => { c.strokeStyle=col; c.lineWidth=2.6; c.beginPath(); for (let i=0;i<=200;i++){ const v=kmax*i/200; i?c.lineTo(X(v),Y(f(v))):c.moveTo(X(v),Y(f(v))); } c.stroke(); };
+  curve(v => v*v/2, C.fermion); curve(v => v, C.hot);
+  const lines = (w, slopeG, col) => {
+    c.setLineDash([5,4]); c.lineWidth=1.4; c.strokeStyle=C.muted; c.beginPath(); c.moveTo(X(0),Y(0)); c.lineTo(X(kmax), Y(w/k*kmax)); c.stroke();
+    c.strokeStyle=C.approx; c.beginPath(); c.moveTo(X(0), Y(w - slopeG*k)); c.lineTo(X(kmax), Y(w + slopeG*(kmax-k))); c.stroke(); c.setLineDash([]);
+    c.fillStyle=col; c.beginPath(); c.arc(X(k), Y(w), 5.5, 0, 7); c.fill(); };
+  lines(k*k/2, k, C.fermion); lines(k, 1, C.hot);
+  c.restore();
+  $('dKOut').textContent = f2(k);
+  $('dEph').textContent = f2(k/2); $('dEg').textContent = f2(k); $('dPph').textContent = '1.00'; $('dPg').textContent = '1.00';
+}
+
+/* ================= 3. WAVE PACKETS ================= */
+const PK = {t:0, playing:false, raf:0, last:0, s0:0.6, crest:{e:0,p:0}};
+const K0 = 12, ALPHA = 1/(2*K0), TMAX = 14, XMIN = -2, XMAX = 16;
+const NK = 121, NX = 520;
+function packet(kind, t){ // returns arrays re[], amp[] over x
+  const s0 = PK.s0, dk = 4/s0/(NK-1)*2, re = new Float64Array(NX), im = new Float64Array(NX);
+  for (let q=0;q<NK;q++){ const kk = K0 - 4/s0 + q*dk, a = Math.exp(-(((kk-K0)*s0)**2)), w = kind==='e' ? ALPHA*kk*kk : kk;
+    for (let i=0;i<NX;i++){ const x = XMIN + (XMAX-XMIN)*i/(NX-1), ph = kk*x - w*t; re[i] += a*Math.cos(ph); im[i] += a*Math.sin(ph); } }
+  const amp = new Float64Array(NX); let m=0; for (let i=0;i<NX;i++){ amp[i]=Math.hypot(re[i],im[i]); m=Math.max(m,amp[i]); }
+  // width from |psi|^2
+  let s=0,s1=0,s2=0; for (let i=0;i<NX;i++){ const x = XMIN+(XMAX-XMIN)*i/(NX-1), p=amp[i]*amp[i]; s+=p; s1+=p*x; s2+=p*x*x; }
+  const mean=s1/s, sd=Math.sqrt(Math.max(0,s2/s-mean*mean));
+  return {re, amp, norm:m, mean, sd};
+}
+let PK0 = null;
+function packRender(){
+  const c = pCtx; if (!c) return;
+  const W=640, H=360, L=16, R=16, X = x => L + (x-XMIN)/(XMAX-XMIN)*(W-L-R);
+  c.clearRect(0,0,W,H); c.fillStyle=C.surface; c.fillRect(0,0,W,H);
+  if (!PK0) PK0 = {e:packet('e',0), p:packet('p',0)};
+  const panels = [['e', C.fermion, tr('electron: ω ∝ k²','전자: ω ∝ k²'), 92], ['p', C.hot, tr('photon: ω ∝ k','광자: ω ∝ k'), 262]];
+  let widths = {};
+  panels.forEach(([kind, col, lab, ym]) => {
+    const P = packet(kind, PK.t), sc = 62/PK0[kind].norm; widths[kind] = P.sd/PK0[kind].sd;
+    c.strokeStyle=C.rule; c.lineWidth=1; c.beginPath(); c.moveTo(L, ym); c.lineTo(W-R, ym); c.stroke();
+    c.strokeStyle=C.muted; c.lineWidth=1; c.beginPath(); for (let i=0;i<NX;i++){ const x=X(XMIN+(XMAX-XMIN)*i/(NX-1)), y=ym - P.re[i]*sc; i?c.lineTo(x,y):c.moveTo(x,y); } c.stroke();
+    c.strokeStyle=col; c.lineWidth=2.4; for (const sg of [1,-1]){ c.beginPath(); for (let i=0;i<NX;i++){ const x=X(XMIN+(XMAX-XMIN)*i/(NX-1)), y=ym - sg*P.amp[i]*sc; i?c.lineTo(x,y):c.moveTo(x,y); } c.stroke(); }
+    // one crest, moving at the phase velocity; when it drops off the back of the envelope, follow the next one at the front
+    const vph = kind==='e' ? ALPHA*K0 : 1, lam = 2*Math.PI/K0; let xc = vph*PK.t + PK.crest[kind]*lam;
+    while (xc < PK.t - 2.2*P.sd){ PK.crest[kind] += Math.ceil(4.4*P.sd/lam); xc = vph*PK.t + PK.crest[kind]*lam; }
+    c.fillStyle=C.ink; c.beginPath(); c.moveTo(X(xc), ym+70); c.lineTo(X(xc)-6, ym+80); c.lineTo(X(xc)+6, ym+80); c.closePath(); c.fill();
+    c.fillStyle=col; c.font='600 13px '+SANS; c.textAlign='left'; c.fillText(lab, L+4, ym-70);
+  });
+  c.fillStyle=C.muted; c.font='12px '+SANS; c.textAlign='right'; c.fillText(tr('position x →','위치 x →'), W-R, H-6);
+  $('pT').textContent = PK.t.toFixed(1); $('pSe').textContent = widths.e.toFixed(2); $('pSp').textContent = widths.p.toFixed(2);
+}
+function packPlay(on){ PK.playing = on; $('pPlay').setAttribute('aria-pressed', String(on)); $('pPlay').textContent = on ? tr('Pause','일시 정지') : tr('Play','재생');
+  cancelAnimationFrame(PK.raf); if (on){ if (PK.t >= TMAX) packReset(false); PK.last = performance.now(); PK.raf = requestAnimationFrame(packStep); } }
+function packStep(now){ if (!PK.playing) return; PK.t = Math.min(TMAX, PK.t + (now-PK.last)/1000*1.4); PK.last = now; packRender(); if (PK.t >= TMAX){ packPlay(false); return; } PK.raf = requestAnimationFrame(packStep); }
+function packReset(draw=true){ PK.t = 0; PK.crest = {e:0,p:0}; PK0 = null; if (draw) packRender(); }
+$('pPlay').addEventListener('click', () => { if (reduceMotion){ PK.t = PK.t >= TMAX ? 0 : TMAX; packRender(); return; } packPlay(!PK.playing); });
+$('pReset').addEventListener('click', () => { packPlay(false); packReset(); });
+$('pW').addEventListener('input', e => { PK.s0 = +e.target.value; $('pWOut').textContent = PK.s0.toFixed(2); packReset(); });
+$('pWOut').textContent = PK.s0.toFixed(2);
+
+/* ================= 4. RELATIVISTIC BRIDGE ================= */
+const RB = {m:1, p:0.5};
+function bridgeRender(){
+  const c = rCtx; if (!c) return;
+  const W=640, H=340, L=52, R=16, T=16, B=40, pmax=4, emax=4, m=RB.m, p=RB.p;
+  const X = v => L + v/pmax*(W-L-R), Y = v => H-B - v/emax*(H-T-B);
+  c.clearRect(0,0,W,H); c.fillStyle=C.surface; c.fillRect(0,0,W,H);
+  if (m > 0){ c.fillStyle=C.band; c.fillRect(X(0), T, X(Math.min(m,pmax))-X(0), H-T-B); }
+  c.font='12px '+SANS; c.fillStyle=C.muted; c.textAlign='center'; for (let v=0; v<=4; v++) c.fillText(v, X(v), H-B+16);
+  c.textAlign='right'; for (let v=0; v<=4; v++){ c.fillText(v, L-6, Y(v)+4); }
+  rich(c, W-R, H-8, 15, [['p','i'],['c','i']], 'right'); rich(c, L+6, T+12, 15, [['E','i'],[' − ','r'],['mc','i'],['2','sup']], 'left');
+  if (m > 0){ c.fillStyle=C.muted; c.textAlign='left'; c.font='12px '+SANS; c.fillText('p < mc', X(0)+6, T+36); }
+  axes(c, L, T, R, B, W, H);
+  c.save(); c.beginPath(); c.rect(L, T, W-L-R, H-T-B); c.clip();
+  const curve = (f, col, dash, w) => { c.strokeStyle=col; c.setLineDash(dash); c.lineWidth=w; c.beginPath(); for (let i=0;i<=300;i++){ const v=pmax*i/300; i?c.lineTo(X(v),Y(f(v))):c.moveTo(X(v),Y(f(v))); } c.stroke(); c.setLineDash([]); };
+  curve(v => v, C.hot, [6,5], 2); if (m > 0) curve(v => v*v/(2*m), C.fermion, [6,5], 2);
+  curve(v => Math.sqrt(v*v + m*m) - m, C.ink, [], 2.6);
+  const ex = Math.sqrt(p*p+m*m) - m; c.fillStyle=C.ink; c.beginPath(); c.arc(X(p), Y(ex), 5.5, 0, 7); c.fill();
+  c.restore();
+  $('rMOut').textContent = f2(m); $('rPOut').textContent = f2(p);
+  $('rEx').textContent = ex.toFixed(3); $('rNr').textContent = m > 0 ? (p*p/(2*m)).toFixed(3) : '∞'; $('rUr').textContent = p.toFixed(3);
+  $('rVg').textContent = (p === 0 && m === 0) ? '1.000' : (p/Math.sqrt(p*p+m*m)).toFixed(3);
+  let v;
+  if (m === 0) v = tr('Massless: the relation is exactly E = pc at every momentum.', '질량이 0이면 모든 운동량에서 정확히 E = pc입니다.');
+  else if (p === 0) v = tr('At rest: only the rest energy mc² is left.', '정지해 있으면 정지 에너지 mc²만 남습니다.');
+  else { const eN = (p*p/(2*m) - ex)/ex, eU = (p - ex)/ex;
+    v = p < m ? tr(`p < mc: p²/2m is off by ${(eN*100).toFixed(1)}%, pc by ${(eU*100).toFixed(0)}%. The particle behaves nonrelativistically.`, `p < mc: p²/2m의 오차는 ${(eN*100).toFixed(1)}%, pc의 오차는 ${(eU*100).toFixed(0)}%입니다. 비상대론적으로 행동합니다.`)
+              : tr(`p > mc: p²/2m is off by ${(eN*100).toFixed(0)}%, pc by ${(eU*100).toFixed(1)}%. The particle behaves more and more like light.`, `p > mc: p²/2m의 오차는 ${(eN*100).toFixed(0)}%, pc의 오차는 ${(eU*100).toFixed(1)}%입니다. 점점 빛처럼 행동합니다.`); }
+  $('rVerdict').textContent = v;
+}
+$('rM').addEventListener('input', e => { RB.m = +e.target.value; bridgeRender(); });
+$('rP').addEventListener('input', e => { RB.p = +e.target.value; bridgeRender(); });
+
+/* ================= 5. DENSITY OF STATES ================= */
+const SD = {sp:'e', bins:16};
+const NM = 60;
+let LAT = null;   // squared radii n^2 of all lattice points n_i = 1..NM
+function lattice(){ if (LAT) return LAT; LAT = new Float64Array(NM*NM*NM); let q=0; for (let a=1;a<=NM;a++) for (let b=1;b<=NM;b++) for (let d=1;d<=NM;d++) LAT[q++] = a*a+b*b+d*d; return LAT; }
+function dosRender(){
+  const sp = SD.sp, nb = SD.bins, el = sp==='e';
+  document.querySelectorAll('[data-sp]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sp===sp)));
+  $('sBOut').textContent = nb;
+  const col = el ? C.fermion : C.hot, col2 = el ? C.sea : C.band;
+  // energy as a function of the n-space radius: particle E = n^2, photon E = n (units of h^2/8mL^2 and hc/2L)
+  const Efun = r2 => el ? r2 : Math.sqrt(r2);
+  // slice picture
+  let c = sCtx; if (c){ const W=640, H=380, n2max=29, L=50, T=14, s=(H-T-36)/n2max, X = v => L + v*s, Y = v => H-36 - v*s;
+    c.clearRect(0,0,W,H); c.fillStyle=C.surface; c.fillRect(0,0,W,H);
+    const Emax = Efun(n2max*n2max), dE = Emax/nb;
+    for (let b=1;b<=nb;b++){ const rr = el ? Math.sqrt(b*dE) : b*dE; c.strokeStyle=C.rule; c.lineWidth=1; c.beginPath(); c.arc(X(0), Y(0), rr*s, -Math.PI/2, 0); c.stroke(); }
+    for (let a=1;a<=n2max;a++) for (let b=1;b<=n2max;b++){ const E = Efun(a*a+b*b+1), k = Math.floor(E/dE); if (k >= nb) continue;
+      c.fillStyle = k%2 ? col : col2; c.beginPath(); c.arc(X(a), Y(b), 3.3, 0, 7); c.fill(); }
+    axes(c, L, T, 20, 36, W, H); c.fillStyle=C.muted; rich(c, X(n2max), H-14, 15, [['n','i'],['x','isub']], 'right'); rich(c, L-8, T+12, 15, [['n','i'],['y','isub']], 'right');
+    c.font='12px '+SANS; c.textAlign='left'; c.fillStyle=C.muted;
+    c.textAlign='right'; const msg = el ? [tr('particle: radius n ∝ √E','입자: 반지름 n ∝ √E'), tr('equal ΔE → thinner and thinner rings','같은 ΔE → 점점 얇아지는 고리')] : [tr('photon: radius n ∝ E','광자: 반지름 n ∝ E'), tr('equal ΔE → rings of equal width','같은 ΔE → 폭이 같은 고리')];
+    c.fillText(msg[0], W-14, T+14); c.fillText(msg[1], W-14, T+32);
+  }
+  // histogram from exact lattice counting
+  c = hCtx; if (!c) return;
+  const lat = lattice(), Emax = Efun(NM*NM), dE = Emax/nb, cnt = new Float64Array(nb); let tot=0;
+  for (let q=0;q<lat.length;q++){ const E = Efun(lat[q]); if (E < Emax){ cnt[Math.floor(E/dE)]++; tot++; } }
+  const pol = el ? 1 : 2; for (let b=0;b<nb;b++) cnt[b] *= pol; tot *= pol;
+  const Nf = E => el ? Math.PI/6*Math.pow(E,1.5) : 2*Math.PI/6*E*E*E;   // octant of a sphere, n = E^(1/2) or n = E
+  const W=640, H=260, L=64, R=16, T=14, B=40, ymax = Math.max(...cnt, Nf(Emax)-Nf(Emax-dE))*1.08;
+  const X = e => L + e/Emax*(W-L-R), Y = v => H-B - v/ymax*(H-T-B);
+  c.clearRect(0,0,W,H); c.fillStyle=C.surface; c.fillRect(0,0,W,H);
+  for (let b=0;b<nb;b++){ c.fillStyle = col; c.globalAlpha = 0.55; c.fillRect(X(b*dE)+1, Y(cnt[b]), X(dE)-X(0)-2, Y(0)-Y(cnt[b])); } c.globalAlpha=1;
+  c.strokeStyle=C.ink; c.fillStyle=C.ink; c.lineWidth=2; c.beginPath(); for (let b=0;b<nb;b++){ const v=Nf((b+1)*dE)-Nf(b*dE), x=X((b+0.5)*dE); b?c.lineTo(x,Y(v)):c.moveTo(x,Y(v)); } c.stroke();
+  for (let b=0;b<nb;b++){ const v=Nf((b+1)*dE)-Nf(b*dE); c.beginPath(); c.arc(X((b+0.5)*dE), Y(v), 3, 0, 7); c.fill(); }
+  axes(c, L, T, R, B, W, H); c.font='12px '+SANS; c.fillStyle=C.muted; c.textAlign='center';
+  c.fillText(tr('energy E (bins of equal width)','에너지 E (같은 폭의 구간)'), (L+W-R)/2, H-6);
+  c.save(); c.translate(14, (T+H-B)/2); c.rotate(-Math.PI/2); c.fillText(tr('states per bin','구간당 상태 수'), 0, 0); c.restore();
+  c.textAlign='right'; c.fillText(Math.round(ymax).toLocaleString('en-US'), L-6, T+10); c.fillText('0', L-6, H-B);
+  c.textAlign='left'; c.fillStyle=C.ink; c.fillText(tr('— formula g(E) ΔE','— 공식 g(E) ΔE'), L+10, T+12);
+  $('sCnt').textContent = tot.toLocaleString('en-US'); $('sForm').textContent = Math.round(Nf(Emax)).toLocaleString('en-US');
+  $('sExp').innerHTML = el ? '<i>E</i><sup>1/2</sup>' : '<i>E</i><sup>2</sup>';
+  $('sVerdict').textContent = el ? tr('Equal energy bins hold more and more states, but slowly: g(E) ∝ √E.','같은 에너지 구간에 담기는 상태 수가 늘지만 천천히 늡니다: g(E) ∝ √E.')
+                                 : tr('Equal energy bins fill up fast: the shells keep their width while their area grows as E², so g(E) ∝ E².','같은 에너지 구간이 빠르게 채워집니다: 껍질의 폭은 그대로인데 넓이가 E²으로 커지므로 g(E) ∝ E²입니다.');
+}
+document.querySelectorAll('[data-sp]').forEach(b => b.addEventListener('click', () => { SD.sp = b.dataset.sp; dosRender(); }));
+$('sB').addEventListener('input', e => { SD.bins = +e.target.value; dosRender(); });
+
+/* ================= LAYOUT ================= */
+let boxCtx, dCtx, pCtx, rCtx, sCtx, hCtx;
+function layout(){ boxCtx = fit($('boxCv'), 640, 340); dCtx = fit($('dCv'), 640, 340); pCtx = fit($('pCv'), 640, 360); rCtx = fit($('rCv'), 640, 340); sCtx = fit($('sCv'), 640, 380); hCtx = fit($('hCv'), 640, 260); redrawAll(); }
+function redrawAll(){ boxRender(); dispRender(); packRender(); bridgeRender(); dosRender(); }
+$('bN').addEventListener('input', e => { BX.n = +e.target.value; boxRender(); });
+$('dK').addEventListener('input', e => { DS.k = +e.target.value; dispRender(); });
+window.addEventListener('langchange', () => { $('pPlay').textContent = PK.playing ? tr('Pause','일시 정지') : tr('Play','재생'); redrawAll(); });
+let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(layout, 80); });
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { readColors(); redrawAll(); });
+new MutationObserver(() => { readColors(); redrawAll(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+layout();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(redrawAll);
+// gently animate the standing wave while the box is on screen
+let boxVis = false; new IntersectionObserver(es => es.forEach(e => boxVis = e.isIntersecting)).observe($('boxCv'));
+if (!reduceMotion){ let last = performance.now(); (function loop(now){ if (boxVis){ BX.t += (now-last)/1000; boxRender(); } last = now; requestAnimationFrame(loop); })(performance.now()); }
+})();
+
+</script>
+<script>
+(() => {
+  // light/dark switch; the choice is remembered across all of the course demos
+  const btn = document.getElementById("themeBtn"), root = document.documentElement, mq = matchMedia("(prefers-color-scheme: dark)");
+  const SUN = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>';
+  const MOON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>';
+  const current = () => root.dataset.theme || (mq.matches ? "dark" : "light");
+  const sync = () => { const dark = current() === "dark", label = dark ? tr("Switch to light mode","밝은 화면으로 전환") : tr("Switch to dark mode","어두운 화면으로 전환");
+    btn.innerHTML = dark ? SUN : MOON; btn.setAttribute("aria-label", label); btn.title = label; };
+  btn.addEventListener("click", () => { const next = current() === "dark" ? "light" : "dark"; root.dataset.theme = next;
+    try { localStorage.setItem("netsci-theme", next); } catch (e) {} sync(); });
+  mq.addEventListener("change", sync);
+  window.addEventListener("langchange", sync);
+  sync();
+})();
+</script>
+<!-- lang-toggle:body -->
+<script>
+window.I18N_KO={
+"__title": "전자와 광자 · 에너지–운동량 관계는 어디서 오는가",
+"k1": "이상훈 교수의 가이드(통계역학 보충 노트)에 따라 Claude Opus 5.5가 만든 인터랙티브 데모",
+"k2": "전자와 광자",
+"k3": "전자와 광자를 같은 상자에 넣으면 허용되는 파장과 운동량은 똑같은데, 에너지 준위는 하나는 \\(n^2\\)으로, 다른 하나는 \\(n\\)으로 늘어납니다. 차이는 단 한 줄, 질량 있는 입자의 \\(E = p^2/2m\\)과 광자의 \\(E = pc\\)에서 옵니다. 그리고 그 한 줄은 두 대상이 따르는 파동방정식에서 시간 미분과 공간 미분의 차수로부터 나옵니다.",
+"k4": "같은 상자, 같은 운동량, 다른 에너지",
+"k5": "둘 중 어느 것이든 길이 \\(L\\)인 상자(또는 공동)에 가둡니다. 경계조건은 똑같이 “양 끝이 고정된 정상파”이므로 허용되는 파장과 운동량도 같습니다:",
+"k6": "에너지는 다릅니다:",
+"k7": "운동량의 양자화는 똑같고, 나머지는 모두 에너지가 운동량에 어떻게 의존하는지에서 나옵니다. (광자에 \\(\\tfrac12 mv^2\\)을 쓰면 \\(\\tfrac12 \\cdot 0 \\cdot c^2 = 0\\)이 되어 모순입니다. 이 식은 느린 질량 있는 입자에만 유효합니다.)",
+"k8": "<span><span class=\"swatch\" style=\"background:var(--fermion)\"><\/span>전자, \\(E_n \\propto n^2\\)<\/span>\n        <span><span class=\"swatch\" style=\"background:var(--hot)\"><\/span>광자, \\(E_n \\propto n\\)<\/span>",
+"k9": "두 사다리를 같은 축척으로, 각자의 바닥 상태 에너지 \\(E_1\\)을 단위로 그렸습니다.",
+"k10": "<span class=\"lt\">모드 번호 \\(n\\)<\/span>",
+"k11": "파장 \\(\\lambda_n\\)",
+"k12": "운동량 \\(p_n\\)",
+"k13": "전자 \\(E_n/E_1\\)",
+"k14": "광자 \\(E_n/E_1\\)",
+"k15": "다음 준위까지 간격, 전자",
+"k16": "다음 준위까지 간격, 광자",
+"k17": "파동방정식에서 분산관계로",
+"k18": "선형이고 계수가 상수인 파동방정식은 평면파 \\(\\psi = A\\,e^{i(\\mathbf{k}\\cdot\\mathbf{r} - \\omega t)}\\)를 해로 가집니다. 평면파에 미분을 작용하면 곱셈으로 바뀝니다:",
+"k19": "따라서 미분방정식은 \\(\\omega\\)와 \\(k\\) 사이의 대수 관계, 곧 <b>분산관계<\/b> \\(\\omega(k)\\)가 됩니다. 여기에 \\(E = \\hbar\\omega\\)(플랑크–아인슈타인)와 \\(p = \\hbar k\\)(드브로이)를 대입하면 분산관계가 그대로 에너지–운동량 관계 \\(E(p)\\)가 됩니다.",
+"k20": "자유 입자의 슈뢰딩거 방정식은 시간에 대해 1차, 공간에 대해 2차입니다:",
+"k21": "사실 이 방정식은 거꾸로 고전적 관계 \\(E = p^2/2m\\)에 \\(E \\to i\\hbar\\partial_t\\), \\(\\mathbf{p} \\to -i\\hbar\\nabla\\)를 대입해서 만든 것입니다. 즉 \\(E \\propto p^2\\)라는 정보가 방정식의 형태에 새겨져 있습니다. 진공의 맥스웰 방정식에서 패러데이 법칙에 회전을 한 번 더 취하면, 시간과 공간 모두에 대해 2차인 파동방정식이 나옵니다:",
+"k22": "이것은 고전 파동의 \\(\\lambda f = c\\)와 같은 내용이며, \\(E = hf\\), \\(p = h/\\lambda\\)를 쓰면 \\(E = pc = hf\\)입니다. 요점: 시간 미분 차수가 \\(a\\), 공간 미분 차수가 \\(b\\)이면 \\(\\omega^a \\propto k^b\\), 즉 \\(E^a \\propto p^b\\)입니다. 조건 \\(\\nabla\\cdot\\mathbf{E} = 0\\)은 평면파에서 \\(\\mathbf{k}\\cdot\\mathbf{E} = 0\\), 곧 횡파 조건이 되므로, 각 \\(\\mathbf{k}\\)마다 편광 방향이 <b>2개<\/b>입니다.",
+"k23": "두 관계는 지수만 다른 것이 아닙니다. 마루는 위상속도 \\(v_{\\text{ph}} = \\omega/k\\)로, 파속은 군속도 \\(v_{\\text{g}} = d\\omega/dk\\)로 움직입니다. 전자는 \\(v_{\\text{ph}} = \\hbar k/2m = v/2\\)이지만 \\(v_{\\text{g}} = \\hbar k/m = p/m = v\\)로, 군속도가 고전적 입자의 속도와 같습니다. 빛은 둘 다 \\(c\\)입니다.",
+"k24": "<span><span class=\"swatch line\" style=\"background:var(--fermion)\"><\/span>전자, \\(\\omega = \\hbar k^2/2m\\)<\/span>\n        <span><span class=\"swatch line\" style=\"background:var(--hot)\"><\/span>광자, \\(\\omega = ck\\)<\/span>\n        <span><span class=\"swatch dash\" style=\"border-color:var(--muted)\"><\/span>원점에서 그은 기울기: \\(v_{\\text{ph}}\\)<\/span>\n        <span><span class=\"swatch dash\" style=\"border-color:var(--approx)\"><\/span>접선: \\(v_{\\text{g}}\\)<\/span>",
+"k25": "\\(c = 1\\), \\(\\hbar/m = 1\\)인 단위입니다. \\(k = 1\\)에서 전자의 접선이 광자의 직선과 나란해져 군속도가 \\(c\\)가 됩니다(물론 거기서는 이미 비상대론적 식이 맞지 않습니다).",
+"k26": "<span class=\"lt\">파수 \\(k\\)<\/span>",
+"k27": "전자 \\(v_{\\text{ph}}\\)",
+"k28": "전자 \\(v_{\\text{g}}\\)",
+"k29": "광자 \\(v_{\\text{ph}}\\)",
+"k30": "광자 \\(v_{\\text{g}}\\)",
+"k31": "전자는 접선이 언제나 원점에서 그은 직선보다 두 배 가파릅니다: \\(v_{\\text{g}} = 2v_{\\text{ph}}\\).",
+"k32": "분산: 퍼지는 파속",
+"k33": "\\(k_0\\) 근처의 파수를 가진 평면파들을 더해 국소화된 파속을 만듭니다. 진공의 빛처럼 모든 파동이 같은 속도로 움직이면 파속은 영원히 모양을 유지합니다. 슈뢰딩거 방정식처럼 속도가 파장에 따라 다르면 성분들이 서로 멀어져 파속이 퍼집니다. 마루도 보세요: 전자는 마루가 포락선의 절반 속도로 움직여서, 뒤에서 나타나 앞에서 사라집니다.",
+"k34": "<span><span class=\"swatch line\" style=\"background:var(--muted)\"><\/span>실수부 \\(\\mathrm{Re}\\,\\psi\\)<\/span>\n        <span><span class=\"swatch line\" style=\"background:var(--fermion)\"><\/span>포락선 \\(|\\psi|\\), 전자<\/span>\n        <span><span class=\"swatch line\" style=\"background:var(--hot)\"><\/span>포락선, 광자<\/span>\n        <span>▲ 마루 하나<\/span>",
+"k36": "처음부터",
+"k37": "<span class=\"lt\">처음 폭 \\(\\sigma_0\\)<\/span>",
+"k38": "<small>좁은 파속일수록 더 넓은 범위의 \\(k\\)를 담고 있어 더 빨리 퍼집니다.<\/small>",
+"k39": "시간 \\(t\\)",
+"k40": "전자의 폭 \\(\\sigma/\\sigma_0\\)",
+"k41": "광자의 폭 \\(\\sigma/\\sigma_0\\)",
+"k42": "두 포락선 모두 같은 군속도 \\(v_{\\text{g}} = 1\\)로 움직입니다. 전자의 폭은 \\(\\sigma(t) = \\sigma_0\\sqrt{1 + (\\hbar t/2m\\sigma_0^2)^2}\\)로 커집니다.",
+"k43": "하나의 관계, 두 개의 극한",
+"k44": "두 결과는 하나의 상대론적 관계식",
+"k45": "의 두 극한입니다. 이 관계에 \\(E \\to i\\hbar\\partial_t\\), \\(\\mathbf{p} \\to -i\\hbar\\nabla\\)를 대입하면 클라인–고든 방정식",
+"k46": "을 얻습니다. \\(m = 0\\)이면 마지막 항이 사라져 맥스웰의 파동방정식과 같은 형태가 됩니다: \\(E = pc\\). \\(m > 0\\), \\(p \\ll mc\\)이면 \\(E = mc^2\\sqrt{1 + p^2/m^2c^2} \\approx mc^2 + p^2/2m\\)입니다. 정지 에너지에 해당하는 빠른 진동을 \\(\\psi = \\phi\\,e^{-imc^2t/\\hbar}\\)로 떼어 내고 \\(\\phi\\)의 시간 2차 미분 항을 무시하면 정확히 슈뢰딩거 방정식 \\(i\\hbar\\partial_t\\phi = -\\frac{\\hbar^2}{2m}\\nabla^2\\phi\\)가 남습니다. 즉 슈뢰딩거 방정식이 시간에 대해 1차인 것은 비상대론적 근사의 결과이며, 이 근사가 \\(E \\propto p^2\\)를 낳습니다. 반면 질량이 0인 광자에는 이런 근사를 할 정지 에너지 자체가 없으므로 시간 2차 형태가 그대로 남고 \\(E \\propto p\\)가 됩니다.",
+"k47": "<span><span class=\"swatch line\" style=\"background:var(--ink)\"><\/span>\\(E - mc^2 = \\sqrt{p^2c^2 + m^2c^4} - mc^2\\)<\/span>\n        <span><span class=\"swatch dash\" style=\"border-color:var(--fermion)\"><\/span>\\(p^2/2m\\)<\/span>\n        <span><span class=\"swatch dash\" style=\"border-color:var(--hot)\"><\/span>\\(pc\\)<\/span>",
+"k48": "<span class=\"lt\">질량 \\(m\\)<\/span>",
+"k49": "<span class=\"lt\">운동량 \\(p\\)<\/span>",
+"k50": "\\(E - mc^2\\), 정확한 값",
+"k51": "군속도 \\(dE/dp\\)",
+"k52": "\\(c = 1\\)인 단위입니다. 음영은 비상대론적 식이 통하는 \\(p &lt; mc\\) 영역입니다.",
+"k53": "3차원 상자 속 상태 세기",
+"k54": "한 변이 \\(L\\)인 정육면체에서는 방향마다 \\(k_i = \\pi n_i/L\\)로 양자화되므로 \\(p = \\frac{h}{2L}\\sqrt{n_x^2 + n_y^2 + n_z^2}\\)이고,",
+"k55": "\\((n_x, n_y, n_z)\\) 공간에서 에너지가 일정한 면은 두 경우 모두 구면입니다. 다만 반지름 \\(n\\)이 입자에서는 \\(E^{1/2}\\)로, 광자에서는 \\(E\\)로 늘어납니다. 구의 8분의 1 안의 격자점 수 \\(N = \\frac18\\cdot\\frac{4\\pi}{3}n^3\\)(광자는 편광 때문에 2배)을 \\(V = L^3\\)으로 세면",
+"k56": "광자의 경우 \\(E = h\\nu\\)로 바꾸면 \\(g(\\nu)\\,d\\nu = \\frac{8\\pi V\\nu^2}{c^3}d\\nu\\)로, 플랑크 복사 법칙에 들어가는 바로 그 모드 수입니다. 일반적으로 3차원에서 \\(E \\propto p^s\\)이면 \\(g(E) \\propto E^{3/s - 1}\\)이고, 압력과 에너지 밀도 \\(u\\) 사이에 \\(P = \\frac{s}{3}u\\)가 성립합니다.",
+"k57": "\\(n\\) 공간의 단면 \\(n_z = 1\\). 번갈아 칠한 색은 폭 \\(\\Delta E\\)가 같은 에너지 구간입니다: 입자는 바깥으로 갈수록 고리가 얇아지고, 광자는 고리 폭이 그대로입니다.",
+"k58": "전자, \\(E \\propto n^2\\)",
+"k59": "광자, \\(E \\propto n\\)",
+"k60": "<span class=\"lt\">에너지 구간 수<\/span>",
+"k61": "센 상태 수",
+"k62": "공식 \\(N(E_{\\max})\\)",
+"k63": "\\(g(E) \\propto\\)",
+"k64": "상태는 격자 \\(n_i = 1, \\ldots, 60\\)에서, 구가 아직 격자 안에 들어가는 가장 큰 에너지까지 정확히 셉니다. 전자의 스핀은 세지 않았습니다. \\(n_i = 0\\)인 면은 허용되지 않으므로 센 값이 공식보다 조금 모자라며, 상자가 클수록 그 차이는 줄어듭니다.",
+"k65": "정리",
+"k66": "<tr><th><\/th><th>질량 있는 입자 (비상대론적)<\/th><th>광자<\/th><\/tr>\n      <tr><td>지배 방정식<\/td><td>슈뢰딩거 (시간 1차, 공간 2차)<\/td><td>파동방정식 (시간 2차, 공간 2차)<\/td><\/tr>\n      <tr><td>분산관계<\/td><td>\\(\\omega = \\hbar k^2/2m\\)<\/td><td>\\(\\omega = ck\\)<\/td><\/tr>\n      <tr><td>\\(E(p)\\)<\/td><td>\\(p^2/2m\\) (\\(s = 2\\))<\/td><td>\\(pc\\) (\\(s = 1\\))<\/td><\/tr>\n      <tr><td>1차원 상자 준위<\/td><td>\\(E_n \\propto n^2\\)<\/td><td>\\(E_n \\propto n\\)<\/td><\/tr>\n      <tr><td>3차원 상태밀도<\/td><td>\\(g(E) \\propto E^{1/2}\\)<\/td><td>\\(g(E) \\propto E^2\\)<\/td><\/tr>\n      <tr><td>압력<\/td><td>\\(P = \\frac23 u\\)<\/td><td>\\(P = \\frac13 u\\)<\/td><\/tr>\n      <tr><td>고전/열평형 결과<\/td><td>이상기체 \\(U = \\frac32 Nk_{\\mathrm{B}}T\\)<\/td><td>슈테판–볼츠만 \\(u \\propto T^4\\)<\/td><\/tr>",
+"k67": "상자는 두 경우 모두 운동량을 똑같이 \\(p_n = nh/2L\\)로 양자화합니다. 에너지 준위가 \\(n^2\\)이냐 \\(n\\)이냐의 차이, 나아가 상태밀도가 \\(E^{1/2}\\)이냐 \\(E^2\\)이냐의 차이는 모두 파동방정식에서 시간 미분과 공간 미분의 차수 비(슈뢰딩거 1 : 2, 맥스웰 2 : 2)가 정하는 분산관계에서 나옵니다.",
+"k68": "이 상태밀도가 어디로 이어지는지는 함께 보는 데모에서 확인하세요: <a href=\"https://lshlj82.github.io/degenerate-fermi-gas/\">축퇴된 페르미 기체<\/a>(\\(g \\propto \\sqrt{\\varepsilon}\\))와 <a href=\"https://lshlj82.github.io/photon-statistics/\">광자 통계<\/a>(\\(g \\propto \\nu^2\\)).",
+"k69": "이상훈 교수의 가이드에 따라 Claude Opus 5.5가 만들었습니다: 통계역학 보충 노트 “입자와 광자의 에너지–운동량 관계는 어디서 오는가: 슈뢰딩거 방정식 vs. 맥스웰 파동방정식”."
+};
+(function(){
+  // English / 한국어 switch shared by the course demos; the choice is remembered across pages
+  var KEY='lshlj82-demo-lang', root=document.documentElement, KO=window.I18N_KO||{}, EN={};
+  var els=[].slice.call(document.querySelectorAll('[data-k]'));
+  els.forEach(function(e){EN[e.getAttribute('data-k')]=e.innerHTML;});
+  var titleEN=document.title;
+  var btn=document.createElement('button');btn.id='langBtn';btn.type='button';document.body.appendChild(btn);
+  function typeset(list){
+    if(!list.length)return;
+    if(window.MathJax&&MathJax.typesetPromise){var go=function(){MathJax.typesetPromise(list).catch(function(){});};
+      if(MathJax.startup&&MathJax.startup.promise)MathJax.startup.promise.then(go);else go();}
+    if(window.renderMathInElement&&window.KATEX_OPTS)list.forEach(function(e){try{renderMathInElement(e,window.KATEX_OPTS)}catch(_){}}); 
+  }
+  function apply(l,first){
+    window.LANG=l;root.dataset.lang=l;root.lang=l;var changed=[];
+    els.forEach(function(e){var k=e.getAttribute('data-k'),s=(l==='ko'&&KO[k]!=null)?KO[k]:EN[k];if(e.innerHTML!==s){e.innerHTML=s;changed.push(e);}});
+    document.title=(l==='ko'&&KO.__title)?KO.__title:titleEN;
+    btn.textContent=l==='ko'?'EN':'한국어';btn.setAttribute('aria-label',l==='ko'?'View in English':'한국어로 보기');btn.title=btn.getAttribute('aria-label');
+    btn.setAttribute('lang',l==='ko'?'en':'ko');
+    if(!first)typeset(changed);
+    window.dispatchEvent(new CustomEvent('langchange',{detail:{lang:l}}));
+    // canvases drawn before the Korean web font arrives are redrawn once it has loaded
+    if(l==='ko'&&document.fonts&&!document.fonts.check('16px "IBM Plex Sans KR"','가'))document.fonts.load('16px "IBM Plex Sans KR"','가').then(function(){if(window.LANG==='ko')window.dispatchEvent(new CustomEvent('langchange',{detail:{lang:'ko'}}));}).catch(function(){});
+  }
+  btn.addEventListener('click',function(){var n=window.LANG==='ko'?'en':'ko';try{localStorage.setItem(KEY,n)}catch(e){}apply(n,false);});
+  apply(window.LANG||'en',true);
+})();
+</script>
+<!-- lang-toggle:body-end -->
+</body>
+</html>
