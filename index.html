@@ -319,8 +319,8 @@ table.cmp td:first-child{color:var(--muted)}
   </div>
   <div class="fig">
     <div>
-      <div class="canvas-holder"><canvas id="sCv" aria-label="The octant of n-space in 3D, with lattice points colored by equal-width energy shells. Drag to rotate."></canvas></div>
-      <p class="cap" data-k="k57">The octant of \(n\)-space in 3D (drag to rotate). Alternate colors mark shells of equal energy width \(\Delta E\), up to 12 of them: for the particle the shells get thinner outward, for the photon they keep the same width.</p>
+      <div class="canvas-holder"><canvas id="sCv" aria-label="The octant of n-space in 3D, with lattice points colored by equal-width energy shells, next to a 2D slice at fixed n_z. Drag to rotate."></canvas></div>
+      <p class="cap" data-k="k57">Left: the octant of \(n\)-space in 3D (drag to rotate). Right: the slice at the height \(n_z\) marked by the dashed plane, which you can move with the slider. Alternate colors mark shells of equal energy width \(\Delta E\), up to 12 of them: for the particle the shells get thinner outward, for the photon they keep the same width.</p>
       <div class="canvas-holder" style="margin-top:1rem"><canvas id="hCv" aria-label="Number of states per energy bin from counting lattice points, compared with the formula for the density of states"></canvas></div>
       <p class="verdict" id="sVerdict"></p>
     </div>
@@ -332,6 +332,10 @@ table.cmp td:first-child{color:var(--muted)}
       <div class="ctl">
         <label for="sB"><span data-k="k60"><span class="lt">Energy bins</span></span> <output id="sBOut"></output></label>
         <input type="range" id="sB" min="6" max="40" step="1" value="16">
+      </div>
+      <div class="ctl">
+        <label for="sZ"><span data-k="k70"><span class="lt">Slice height</span> \(n_z\)</span> <output id="sZOut">3</output></label>
+        <input type="range" id="sZ" min="1" max="12" step="1" value="3">
       </div>
       <dl class="stats">
         <dt data-k="k61">States counted</dt><dd id="sCnt">–</dd>
@@ -564,10 +568,11 @@ function dosRender(){
 }
 document.querySelectorAll('[data-sp]').forEach(b => b.addEventListener('click', () => { SD.sp = b.dataset.sp; dosRender(); }));
 $('sB').addEventListener('input', e => { SD.bins = +e.target.value; dosRender(); });
+$('sZ').addEventListener('input', e => { OV.z = +e.target.value; $('sZOut').textContent = OV.z; octRender(); });
 
 
 /* 3D octant of n-space: lattice points colored by equal-width energy shells */
-const OV = {yaw:0.75, pitch:0.38, drag:null, spin:!reduceMotion, vis:false};
+const OV = {yaw:0.75, pitch:0.38, drag:null, spin:!reduceMotion, vis:false, z:3};
 const NS = 13;
 function sqrtLabel(c, xr, y, size, prefix, rad, col){   // right-aligned "prefix n ∝ √E" with a radical whose bar covers E
   c.save(); c.fillStyle = col; c.strokeStyle = col;
@@ -585,7 +590,7 @@ function sqrtLabel(c, xr, y, size, prefix, rad, col){   // right-aligned "prefix
   c.restore(); }
 function octRender(){
   const c = sCtx; if (!c) return;
-  const W=640, H=380, el = SD.sp==='e', col = el ? C.fermion : C.hot, col2 = el ? C.sea : C.band;
+  const W=640, H=380, el = SD.sp==='e', z0 = OV.z, col = el ? C.fermion : C.hot, col2 = el ? C.sea : C.band;
   const nb = Math.min(SD.bins, 12), Efun = r2 => el ? r2 : Math.sqrt(r2), Emax = Efun(NS*NS), dE = Emax/nb;
   c.clearRect(0,0,W,H); c.fillStyle=C.surface; c.fillRect(0,0,W,H);
   const cy = Math.cos(OV.yaw), sy = Math.sin(OV.yaw), cp = Math.cos(OV.pitch), sp = Math.sin(OV.pitch);
@@ -595,31 +600,53 @@ function octRender(){
   const R0 = NS + 2.5; let bx0=Infinity, bx1=-Infinity, by0=Infinity, by1=-Infinity;
   for (let q=0;q<=24;q++) for (let w=0;w<=24;w++){ const a = q/24*Math.PI/2, b2 = w/24*Math.PI/2, pt = P0(R0*Math.cos(a)*Math.cos(b2), R0*Math.sin(a)*Math.cos(b2), R0*Math.sin(b2)); bx0=Math.min(bx0,pt[0]); bx1=Math.max(bx1,pt[0]); by0=Math.min(by0,pt[1]); by1=Math.max(by1,pt[1]); }
   { const o = P0(0,0,0); bx0=Math.min(bx0,o[0]); bx1=Math.max(bx1,o[0]); by0=Math.min(by0,o[1]); by1=Math.max(by1,o[1]); }
-  const boxW = 430, boxH = H - 44, sc = Math.min(boxW/(bx1-bx0), boxH/(by1-by0)), ox = 24 + (boxW - (bx1-bx0)*sc)/2 - bx0*sc, oy = 22 + (boxH - (by1-by0)*sc)/2 - by0*sc;
+  const boxW = 320, boxH = H - 64, sc = Math.min(boxW/(bx1-bx0), boxH/(by1-by0)), ox = 14 + (boxW - (bx1-bx0)*sc)/2 - bx0*sc, oy = 30 + (boxH - (by1-by0)*sc)/2 - by0*sc;
   const P = (x,y,z) => { const p = P0(x,y,z); return [ox + p[0]*sc, oy + p[1]*sc, p[2]]; };
   // shell boundaries: quarter circles on the three coordinate planes
   c.lineWidth = 1; c.strokeStyle = C.rule;
   for (let b=1;b<=nb;b++){ const r = el ? Math.sqrt(b*dE) : b*dE;
     for (const plane of [0,1,2]){ c.beginPath(); for (let q=0;q<=40;q++){ const a = q/40*Math.PI/2, u = r*Math.cos(a), v = r*Math.sin(a);
       const p = plane===0 ? P(u,v,0) : plane===1 ? P(0,u,v) : P(v,0,u); q ? c.lineTo(p[0],p[1]) : c.moveTo(p[0],p[1]); } c.stroke(); } }
+  // the slice plane n_z = z0: a quarter disc, lightly filled
+  { const rr = Math.sqrt(Math.max(0, (NS+0.5)**2 - z0*z0)); c.beginPath(); const o = P(0,0,z0); c.moveTo(o[0],o[1]);
+    for (let q=0;q<=40;q++){ const a = q/40*Math.PI/2, p = P(rr*Math.cos(a), rr*Math.sin(a), z0); c.lineTo(p[0],p[1]); } c.closePath();
+    c.fillStyle = C.ink; c.globalAlpha = 0.06; c.fill(); c.globalAlpha = 1; c.strokeStyle = C.ink; c.lineWidth = 1.2; c.setLineDash([4,3]); c.stroke(); c.setLineDash([]); }
   // axes
   c.strokeStyle = C.muted; c.lineWidth = 1.3; c.fillStyle = C.muted;
   [[NS+2.5,0,0,'x'],[0,NS+2.5,0,'y'],[0,0,NS+2.5,'z']].forEach(([x,y,z,l]) => { const a = P(0,0,0), b = P(x,y,z); c.beginPath(); c.moveTo(a[0],a[1]); c.lineTo(b[0],b[1]); c.stroke();
     rich(c, b[0] + (l==='z' ? 8 : 4), b[1] + (l==='z' ? 4 : 14), 15, [['n','i'],[l,'isub']], 'left'); });
   // points, far to near
   const pts = [];
-  for (let a=1;a<=NS;a++) for (let b=1;b<=NS;b++) for (let d=1;d<=NS;d++){ const E = Efun(a*a+b*b+d*d), k = Math.floor(E/dE); if (k >= nb) continue; const p = P(a,b,d); pts.push([p[0],p[1],p[2],k]); }
+  for (let a=1;a<=NS;a++) for (let b=1;b<=NS;b++) for (let d=1;d<=NS;d++){ const E = Efun(a*a+b*b+d*d), k = Math.floor(E/dE); if (k >= nb) continue; const p = P(a,b,d); pts.push([p[0],p[1],p[2],k,d===z0]); }
   pts.sort((u,v) => v[2]-u[2]);
   let dmin = Infinity, dmax = -Infinity; for (const p of pts){ dmin = Math.min(dmin,p[2]); dmax = Math.max(dmax,p[2]); }
-  for (const [x,y,d,k] of pts){ const t = (d-dmin)/(dmax-dmin||1); c.globalAlpha = 0.95 - 0.55*t; c.fillStyle = k%2 ? col : col2;
-    c.beginPath(); c.arc(x, y, (3.4 - 1.2*t)*sc/17, 0, 7); c.fill(); }
+  for (const [x,y,d,k,on] of pts){ const t = (d-dmin)/(dmax-dmin||1); c.globalAlpha = on ? 1 : 0.6 - 0.35*t; c.fillStyle = k%2 ? col : col2;
+    c.beginPath(); c.arc(x, y, (on ? 3.6 : 3.2 - 1.2*t)*sc/17, 0, 7); c.fill();
+    if (on){ c.globalAlpha = 1; c.strokeStyle = C.ink; c.lineWidth = 0.8; c.stroke(); } }
   c.globalAlpha = 1;
   // labels with a real radical sign
   const lab = el ? tr('particle: radius ','입자: 반지름 ') : tr('photon: radius ','광자: 반지름 ');
-  sqrtLabel(c, W-14, 30, 17, lab, el, C.muted);
+  sqrtLabel(c, W-14, 26, 17, lab, el, C.muted);
   c.fillStyle = C.muted; c.font = '13px '+SANS; c.textAlign = 'right';
-  c.fillText(el ? tr('equal ΔE → thinner and thinner shells','같은 ΔE → 점점 얇아지는 껍질') : tr('equal ΔE → shells of equal width','같은 ΔE → 폭이 같은 껍질'), W-14, 54);
-  c.fillText(tr('drag to rotate','끌어서 돌리기'), W-14, H-12);
+  c.fillText(el ? tr('equal ΔE → thinner and thinner shells','같은 ΔE → 점점 얇아지는 껍질') : tr('equal ΔE → shells of equal width','같은 ΔE → 폭이 같은 껍질'), W-14, 48);
+  c.textAlign = 'left'; c.fillText(tr('3D: drag to rotate','3차원: 끌어서 돌리기'), 14, H-12);
+  // divider
+  c.strokeStyle = C.rule; c.lineWidth = 1; c.beginPath(); c.moveTo(344, 64); c.lineTo(344, H-16); c.stroke();
+  // 2D slice n_z = z0
+  const S = 238, sx = W - 16 - S, sY = 96, M = NS + 0.8, Xs = a => sx + a/M*S, Ys = b => sY + S - b/M*S;
+  rich(c, sx, sY - 12, 14, [[tr('slice ','단면 '),'s'],['n','i'],['z','isub'],[' = '+z0,'r']], 'left');
+  c.save(); c.beginPath(); c.rect(sx, sY, S, S); c.clip();
+  c.lineWidth = 1; c.strokeStyle = C.rule;
+  for (let b=1;b<=nb;b++){ const r = el ? Math.sqrt(b*dE) : b*dE, rr2 = r*r - z0*z0; if (rr2 <= 0) continue; const rr = Math.sqrt(rr2);
+    c.beginPath(); c.arc(Xs(0), Ys(0), rr/M*S, -Math.PI/2, 0); c.stroke(); }
+  for (let a=1;a<=NS;a++) for (let b=1;b<=NS;b++){ const k = Math.floor(Efun(a*a+b*b+z0*z0)/dE);
+    c.beginPath(); c.arc(Xs(a), Ys(b), k < nb ? 4 : 1.6, 0, 7);
+    if (k < nb){ c.fillStyle = k%2 ? col : col2; c.fill(); } else { c.fillStyle = C.rule; c.fill(); } }
+  c.restore();
+  c.strokeStyle = C.muted; c.lineWidth = 1.3; c.beginPath(); c.moveTo(sx, sY); c.lineTo(sx, sY+S); c.lineTo(sx+S, sY+S); c.stroke();
+  rich(c, sx+S-14, sY+S+18, 14, [['n','i'],['x','isub']], 'left'); rich(c, sx-22, sY+12, 14, [['n','i'],['y','isub']], 'left');
+  c.fillStyle = C.muted; c.font = '12px '+SANS; c.textAlign = 'right';
+  c.fillText(tr('circles: shell boundaries in this plane','원: 이 평면에서의 껍질 경계'), W-16, H-12);
 }
 (function(){ const cv = $('sCv');
   cv.style.touchAction = 'none'; cv.style.cursor = 'grab';
@@ -723,7 +750,8 @@ window.I18N_KO={
 "k54": "한 변이 \\(L\\)인 정육면체에서는 방향마다 \\(k_i = \\pi n_i/L\\)로 양자화되므로 \\(p = \\frac{h}{2L}\\sqrt{n_x^2 + n_y^2 + n_z^2}\\)이고,",
 "k55": "\\((n_x, n_y, n_z)\\) 공간에서 에너지가 일정한 면은 두 경우 모두 구면입니다. 다만 반지름 \\(n\\)이 입자에서는 \\(E^{1/2}\\)로, 광자에서는 \\(E\\)로 늘어납니다. 구의 8분의 1 안의 격자점 수 \\(N = \\frac18\\cdot\\frac{4\\pi}{3}n^3\\)(광자는 편광 때문에 2배)을 \\(V = L^3\\)으로 세면",
 "k56": "광자의 경우 \\(E = hf\\)로 바꾸면 \\(g(f)\\,df = \\frac{8\\pi Vf^2}{c^3}df\\)로, 플랑크 복사 법칙에 들어가는 바로 그 모드 수입니다. 일반적으로 3차원에서 \\(E \\propto p^s\\)이면 \\(g(E) \\propto E^{3/s - 1}\\)이고, 압력과 에너지 밀도 \\(u\\) 사이에 \\(P = \\frac{s}{3}u\\)가 성립합니다.",
-"k57": "3차원으로 그린 \\(n\\) 공간의 8분의 1 (끌어서 돌리기). 번갈아 칠한 색은 에너지 폭 \\(\\Delta E\\)가 같은 껍질이며 최대 12개까지 그립니다: 입자는 바깥으로 갈수록 껍질이 얇아지고, 광자는 껍질 폭이 그대로입니다.",
+"k57": "왼쪽: 3차원으로 그린 \\(n\\) 공간의 8분의 1 (끌어서 돌리기). 오른쪽: 점선 평면으로 표시한 높이 \\(n_z\\)에서 자른 단면이며, 슬라이더로 높이를 옮길 수 있습니다. 번갈아 칠한 색은 에너지 폭 \\(\\Delta E\\)가 같은 껍질이며 최대 12개까지 그립니다: 입자는 바깥으로 갈수록 껍질이 얇아지고, 광자는 껍질 폭이 그대로입니다.",
+"k70": "<span class=\"lt\">단면 높이<\/span> \\(n_z\\)",
 "k58": "전자, \\(E \\propto n^2\\)",
 "k59": "광자, \\(E \\propto n\\)",
 "k60": "<span class=\"lt\">에너지 구간 수<\/span>",
